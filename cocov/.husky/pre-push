@@ -1,0 +1,4 @@
+# Cocov Guard (Dogfooding)
+# Uses local dist to check itself on push
+npm run build
+node dist/cli.js run "npm test"

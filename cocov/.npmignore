@@ -1,0 +1,14 @@
+src
+tests
+coverage
+.husky
+.github
+.cocov
+cocov.json
+cocov-report.html
+cocov-summary.md
+TEST_README.md
+mock-coverage.json
+tsconfig.json
+vitest.config.ts
+eslint.config.js
