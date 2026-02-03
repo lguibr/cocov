@@ -14,6 +14,101 @@
 
 Cocov is a **Compliance Engine**. It enforces strict coverage baselines, prevents merge regressions via `husky` hooks, and generates audit-ready artifacts in Markdown and HTML.
 
+---
+
+## 🚀 Quick Start (Zero Config)
+
+Run the interactive initializer. This handles **Husky**, **CI**, and **Config** for you.
+
+```bash
+npx cocov init
+```
+
+> **What this does:**
+> 1. Creates `.cocov/config.json`.
+> 2. installs `husky` and adds a `pre-commit` hook.
+> 3. Creates a `.github/workflows/ci.yml` for automated checking.
+
+---
+
+## 📚 The Complete Setup Guide
+
+### 1. Installation
+
+Install as a dev dependency:
+
+```bash
+npm install -D cocov
+```
+
+### 2. The "Golden Rule" (Baseline)
+
+Cocov works by comparing your **current coverage** against a **baseline** (master branch).
+Run it once to establish your first baseline:
+
+```bash
+# Runs tests, checks coverage, and saves the baseline if compliant
+npm run cocov
+```
+
+### 3. Pre-Commit Guard (Husky)
+
+Stop bad code *before* it gets committed. Add this to your `.husky/pre-commit`:
+
+```bash
+# .husky/pre-commit
+npm run cocov
+git add .cocov/history.jsonl # Auto-save the history log!
+```
+
+### 4. CI/CD Integration (GitHub Actions)
+
+We recommend using **OIDC (Trusted Publishers)** for secure, keyless publishing.
+
+**`.github/workflows/ci.yml`**:
+```yaml
+permissions:
+  contents: read
+  id-token: write # Required for Trusted Publishers
+
+steps:
+  - uses: actions/checkout@v4
+  - run: npm ci
+  - run: npm run cocov # fails if coverage drops
+```
+
+### 5. Displaying Badges
+
+Want those cool badges in your README?
+
+```bash
+npx cocov inject-readme
+```
+
+This command:
+1. Generates SVG badges in `assets/badges/`.
+2. Injects them into your `README.md` with absolute GitHub URLs.
+3. Updates automatically when you run `npm run cocov`.
+
+---
+
+## 🛠️ Configuration
+
+Stored in `.cocov/config.json`.
+
+```json
+{
+  "thresholds": {
+    "lines": 90,
+    "functions": 90,
+    "branches": 90
+  },
+  "git": {
+    "enforceClean": true
+  }
+}
+```
+
 ## 📐 Architecture
 
 Cocov operates as a strict middleware between your test runner (Vitest/Jest) and your git history.
@@ -34,55 +129,6 @@ graph TD
         B --> K["SVG Badges"]
     end
 ```
-
-## ✨ Features
-
-- **📉 Regression Guard**: Automatically detects if coverage drops below the master baseline.
-- **Strict Diff Mode**: Enforces 100% coverage on _changed lines only_ (PR mode).
-- **📊 Professional Reporting**: High-fidelity HTML dashboards and GitHub-ready Markdown summaries.
-- **🤖 LLM Friendly**: Outputs are structured for AI context ingestion.
-- **🛡️ Stack Guard**: Enforces standard dependency validation (e.g. no rogue libs).
-
-## 🚀 Quick Start
-
-Initialize Cocov in your project:
-
-```bash
-npx cocov init
-```
-
-_Sets up `.cocov`, `husky` hooks, and CI workflows automatically._
-
-Run the guard:
-
-```bash
-npm run cocov
-```
-
-## 🛠️ Configuration
-
-Stored in `.cocov/config.json` or `cocov.json`.
-
-```json
-{
-  "thresholds": {
-    "lines": 90,
-    "functions": 90,
-    "branches": 90
-  },
-  "git": {
-    "enforceClean": true
-  }
-}
-```
-
-## 🏆 Badges
-
-Cocov generates high-fidelity SVG badges with the project logo and distinct visualizations:
-
-- **Unified Badge**: All metrics (Lines, Branches, Functions) in one readable pill.
-- **Diff Badge**: Visualizes coverage delta (`+5%`, `-1%`) vs baseline.
-- **Strict Accessibility**: High contrast colors and readable typography.
 
 ## 🤝 Contributing
 
