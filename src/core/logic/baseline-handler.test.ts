@@ -1,22 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import fs from 'fs-extra';
 import { handleBaselineCheck } from './baseline-handler.js';
-import * as writer from '../coverage/writer.js';
-import * as reporter from '../../reporter.js';
-import * as comparator from '../../comparator.js';
-import * as git from '../../git-utils.js';
+import * as writer from '@/core/coverage/writer.js';
+// import * as reporter from '@/reporter.js'; // Unused
+import * as comparator from '@/comparator.js';
+import * as git from '@/git-utils.js';
 
-vi.mock('../coverage/writer.js');
-vi.mock('../../reporter.js');
-vi.mock('../../comparator.js');
-vi.mock('../../git-utils.js');
+vi.mock('@/core/coverage/writer.js');
+vi.mock('@/reporter.js');
+vi.mock('@/comparator.js');
+vi.mock('@/git-utils.js');
 vi.mock('fs-extra');
 
 describe('handleBaselineCheck', () => {
-  const mockHistory = { append: vi.fn() } as any;
+  const mockHistory = { append: vi.fn() } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
   const cwd = '/test';
-  const current = { total: { lines: { pct: 80 } } } as any;
-  const baseline = { total: { lines: { pct: 80 } } } as any;
+  const current = { total: { lines: { pct: 80 } } } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  const baseline = { total: { lines: { pct: 80 } } } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -28,7 +28,7 @@ describe('handleBaselineCheck', () => {
     vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({
       isRegression: false,
       improved: false,
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   });
 
   it('writes baseline if none exists (not dry run)', async () => {
@@ -51,7 +51,7 @@ describe('handleBaselineCheck', () => {
   it('exits on regression', async () => {
     vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({
       isRegression: true,
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
     await handleBaselineCheck(cwd, current, baseline, {}, mockHistory);
@@ -59,13 +59,13 @@ describe('handleBaselineCheck', () => {
   });
 
   it('updates baseline on improvement', async () => {
-    vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ improved: true } as any);
+    vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ improved: true } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
     await handleBaselineCheck(cwd, current, baseline, { dryRun: false }, mockHistory);
     expect(writer.writeBaseline).toHaveBeenCalledWith(cwd, current);
   });
 
   it('does not update baseline on improvement (dry run)', async () => {
-    vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ improved: true } as any);
+    vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ improved: true } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
     await handleBaselineCheck(cwd, current, baseline, { dryRun: true }, mockHistory);
     expect(writer.writeBaseline).not.toHaveBeenCalled();
   });

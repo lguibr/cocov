@@ -6,7 +6,7 @@ export async function verifyCoverageFreshness(cwd: string): Promise<boolean> {
   const summaryPath = path.resolve(cwd, 'coverage/coverage-summary.json');
   if (!(await fs.pathExists(summaryPath))) return false;
 
-  const stats = await fs.stat(summaryPath);
+  const stats = (await fs.stat(summaryPath)) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
   const ageMs = Date.now() - stats.mtimeMs;
   const MAX_AGE_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -22,7 +22,7 @@ export async function verifyCoverageFreshness(cwd: string): Promise<boolean> {
   return true;
 }
 
-export async function computeIntegrityHash(content: any): Promise<string> {
+export async function computeIntegrityHash(content: any): Promise<string> { // eslint-disable-line @typescript-eslint/no-explicit-any
   const crypto = await import('crypto');
   return crypto.createHash('sha256').update(JSON.stringify(content)).digest('hex');
 }

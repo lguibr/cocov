@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { verifyCoverageFreshness, computeIntegrityHash } from './integrity.js';
 import fs from 'fs-extra';
-import path from 'path';
 
 vi.mock('fs-extra');
 
@@ -14,8 +13,8 @@ describe('verifyCoverageFreshness', () => {
 
   it('returns true and warns if file is old', async () => {
     vi.mocked(fs.pathExists).mockImplementation(async () => true);
-    const oldStats = { mtimeMs: Date.now() - 20 * 60 * 1000 } as any;
-    vi.mocked(fs.stat).mockResolvedValue(oldStats);
+    const oldStats = { mtimeMs: Date.now() - 20 * 60 * 1000 };
+    vi.mocked(fs.stat).mockResolvedValue(oldStats as unknown as fs.Stats);
 
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const result = await verifyCoverageFreshness('/cwd');
@@ -26,8 +25,8 @@ describe('verifyCoverageFreshness', () => {
 
   it('returns true if file is fresh', async () => {
     vi.mocked(fs.pathExists).mockImplementation(async () => true);
-    const freshStats = { mtimeMs: Date.now() - 1 * 60 * 1000 } as any;
-    vi.mocked(fs.stat).mockResolvedValue(freshStats);
+    const freshStats = { mtimeMs: Date.now() - 1 * 60 * 1000 };
+    vi.mocked(fs.stat).mockResolvedValue(freshStats as unknown as fs.Stats);
 
     const result = await verifyCoverageFreshness('/cwd');
     expect(result).toBe(true);

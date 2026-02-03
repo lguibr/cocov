@@ -7,9 +7,11 @@ export interface InitAnswers {
   setupHusky?: boolean;
   hooks?: string[];
   setupGithubAction?: boolean;
+  updateGitIgnore?: boolean;
 }
 
 export async function askInitQuestions(configExists: boolean): Promise<InitAnswers> {
+  console.log('DEBUG: askInitQuestions executing');
   if (configExists) {
     const { overwrite } = await prompts({
       type: 'confirm',
@@ -60,6 +62,12 @@ export async function askInitQuestions(configExists: boolean): Promise<InitAnswe
       type: 'confirm',
       name: 'setupGithubAction',
       message: 'Generate GitHub Actions Workflow?',
+      initial: true,
+    },
+    {
+      type: 'confirm',
+      name: 'updateGitIgnore',
+      message: 'Add .cocov to .gitignore?',
       initial: true,
     },
   ]);

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { DiffChecker } from '../../diff-checker.js';
-import * as git from '../../git-utils.js';
+import { DiffChecker } from '@/diff-checker.js';
+import * as git from '@/git-utils.js';
 import path from 'path';
 
-vi.mock('../../git-utils.js');
+vi.mock('@/git-utils.js');
 
 describe('DiffChecker', () => {
   const cwd = '/test';

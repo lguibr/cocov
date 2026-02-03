@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
-import { HistoryManager } from '../history.js';
-import { readCurrentCoverage } from '../core/coverage/reader.js';
-import { HtmlGenerator } from '../core/html/generator.js';
+import { HistoryManager } from '@/history.js';
+import { readCurrentCoverage } from '@/core/coverage/reader.js';
+import { HtmlGenerator } from '@/core/html/generator.js';
 
 export async function htmlAction(): Promise<void> {
   try {
@@ -13,7 +13,9 @@ export async function htmlAction(): Promise<void> {
     const generator = new HtmlGenerator(history, current);
     const html = generator.generate();
 
-    const outputPath = 'cocov-report.html';
+    const outputDir = '.cocov/reports';
+    await fs.ensureDir(outputDir);
+    const outputPath = `${outputDir}/index.html`;
     await fs.writeFile(outputPath, html);
     console.log(chalk.green(`✔ HTML report generated at ${outputPath}`));
   } catch (error) {

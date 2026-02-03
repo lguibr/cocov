@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import path from 'path';
-import { askInitQuestions } from '../core/init/questions.js';
-import { scaffoldConfig, setupHusky, setupGithub } from '../core/init/scaffold.js';
+import { askInitQuestions } from '@/core/init/questions.js';
+import { scaffoldConfig, setupHusky, setupGithub, updateGitIgnore } from '@/core/init/scaffold.js';
 
 export async function runInit(): Promise<void> {
   console.log(
@@ -44,6 +44,7 @@ export async function runInit(): Promise<void> {
   await scaffoldConfig(cwd, answers);
   await setupHusky(cwd, answers);
   await setupGithub(cwd, answers);
+  await updateGitIgnore(cwd, answers);
 
   console.log(chalk.bold.green('\n✨ Cocov setup complete!'));
 }

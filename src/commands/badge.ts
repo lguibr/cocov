@@ -1,8 +1,9 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
 
-import { readCurrentCoverage } from '../core/coverage/reader.js';
-import { generateBadgeSvg, BadgeType } from '../core/badges/generator.js';
+import { readCurrentCoverage } from '@/core/coverage/reader.js';
+import { generateBadgeSvg, BadgeType } from '@/core/badges/generator.js';
+import { CoverageSummary } from '@/types.js';
 
 interface BadgeCommandOptions {
   output?: string;
@@ -12,14 +13,22 @@ interface BadgeCommandOptions {
 export async function badgeAction(options: BadgeCommandOptions): Promise<void> {
   try {
     const current = await readCurrentCoverage(process.cwd());
-    const type = (options.type || 'lines') as BadgeType | 'all';
+    const type = (options.type || 'lines') as BadgeType | 'all' | 'unified';
+    
+    // Unified badge
+    if (type === 'unified') {
+      const svg = generateBadgeSvg(current.total, 'unified');
+      const outputPath = options.output || 'cocov-badge-unified.svg';
+      await fs.outputFile(outputPath, svg);
+      console.log(chalk.green(`✔ Badge generated: ${outputPath}`));
+      return;
+    }
     
     // If 'all' is specified, we generate all metrics
     if (type === 'all') {
-      const types: Exclude<BadgeType, 'logo'>[] = ['lines', 'statements', 'functions', 'branches'];
+      const types: Exclude<BadgeType, 'logo' | 'unified'>[] = ['lines', 'statements', 'functions', 'branches'];
       
       for (const t of types) {
-        // @ts-ignore
         const pct = current.total[t].pct;
         const svg = generateBadgeSvg(pct, t);
         const fileName = options.output ? options.output.replace('.svg', `-${t}.svg`) : `cocov-badge-${t}.svg`;
@@ -34,8 +43,7 @@ export async function badgeAction(options: BadgeCommandOptions): Promise<void> {
     if (type === 'logo') {
       pct = 0; // Irrelevant for logo
     } else if (['lines', 'functions', 'branches', 'statements'].includes(type)) {
-       // @ts-ignore - Dynamic access safe here due to check above
-       pct = current.total[type].pct; 
+       pct = current.total[type as keyof CoverageSummary].pct; 
     } else {
        console.warn(chalk.yellow(`Unknown badge type '${type}', defaulting to lines`));
        pct = current.total.lines.pct;

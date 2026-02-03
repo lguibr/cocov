@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { runDiffCheck } from './diff-runner.js';
-import * as reader from '../coverage/reader.js';
-import { DiffChecker } from '../../diff-checker.js';
+import * as reader from '@/core/coverage/reader.js';
+import { DiffChecker } from '@/diff-checker.js';
 
-vi.mock('../coverage/reader.js');
-vi.mock('../../diff-checker.js');
+vi.mock('@/core/coverage/reader.js');
+vi.mock('@/diff-checker.js');
 
 describe('runDiffCheck', () => {
   beforeEach(() => {

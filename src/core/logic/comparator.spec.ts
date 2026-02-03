@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Comparator } from '@/comparator.js';
-import { TotalCoverage } from '@/types.js';
+import { TotalCoverage, CoverageMetric } from '@/types.js';
 
 describe('Comparator Exhaustive Spec', () => {
   const comparator = new Comparator();
@@ -41,9 +41,9 @@ describe('Comparator Exhaustive Spec', () => {
     }
   });
 
-  function createCoverage(overrides: any): TotalCoverage {
+  function createCoverage(overrides: any): TotalCoverage { // eslint-disable-line @typescript-eslint/no-explicit-any
     const defaults = { total: 100, covered: 80, skipped: 0, pct: 80 };
-    const merge = (key: string) => ({
+    const merge = (key: string): CoverageMetric => ({
       ...defaults,
       ...(overrides[key] !== undefined ? { pct: overrides[key] } : {}),
     });

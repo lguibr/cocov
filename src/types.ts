@@ -37,11 +37,21 @@ export interface CocovConfig {
   };
 }
 
+export interface CoverageLocation {
+  line: number;
+  column: number;
+}
+
+export interface CoverageRange {
+  start: CoverageLocation;
+  end: CoverageLocation;
+}
+
 export interface DetailedCoverage {
   path: string;
-  statementMap: Record<string, any>;
-  fnMap: Record<string, any>;
-  branchMap: Record<string, any>;
+  statementMap: Record<string, CoverageRange>;
+  fnMap: Record<string, { name: string; decl: CoverageRange; loc: CoverageRange; line: number }>;
+  branchMap: Record<string, { loc: CoverageRange; type: string; locations: CoverageRange[]; line: number }>;
   s: Record<string, number>;
   f: Record<string, number>;
   b: Record<string, number>;

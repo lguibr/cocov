@@ -1,4 +1,4 @@
-export const htmlTemplate = (historyData: string, currentData: string) => `
+export const htmlTemplate = (historyData: string, currentData: string): string => `
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -32,7 +32,7 @@ describe('setupHusky', () => {
   });
 
   it('installs and inits husky', async () => {
-    vi.mocked(fs.pathExists).mockResolvedValue(false);
+    vi.mocked(fs.pathExists as any).mockResolvedValue(false); // eslint-disable-line @typescript-eslint/no-explicit-any
     await setupHusky(cwd, { setupHusky: true, hooks: ['pre-commit'] });
     expect(execa).toHaveBeenCalledWith(
       'npm',
@@ -51,7 +51,7 @@ describe('setupHusky', () => {
 describe('setupGithub', () => {
   it('skips if not selected', async () => {
     vi.clearAllMocks(); // Ensure clean state
-    await setupGithub('/cwd', { setupGithubAction: false } as any);
+    await setupGithub('/cwd', { setupGithubAction: false });
     expect(fs.writeFile).not.toHaveBeenCalled();
   });
 

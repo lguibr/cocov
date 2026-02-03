@@ -42,7 +42,9 @@ export async function markdownAction(options: { inject?: string }): Promise<void
     } else {
       // Default: Generate file
       const md = generator.generate();
-      const outputPath = 'cocov-summary.md';
+      const outputDir = '.cocov/reports';
+      await fs.ensureDir(outputDir);
+      const outputPath = `${outputDir}/summary.md`;
       await fs.writeFile(outputPath, md);
       console.log(chalk.green(`✔ Markdown report generated at ${outputPath}`));
     }

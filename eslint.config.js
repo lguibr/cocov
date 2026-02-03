@@ -15,7 +15,8 @@ export default [
             ...plugin.configs.recommended.rules,
             "@typescript-eslint/no-explicit-any": "error",
             "@typescript-eslint/explicit-function-return-type": "warn",
-            "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+            "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+            "no-restricted-imports": ["error", { "patterns": [{ "group": ["../*"], "message": "Relative parent imports are not allowed. Use absolute paths (e.g., @/utils) instead." }] }]
         }
     },
     prettierConfig

@@ -1,104 +1,70 @@
-# Cocov: The Code Coverage Guard
-<div align="center">
-  <img src="assets/logo.png" alt="Cocov Logo" width="150" />
-</div>
+# 🛡️ Cocov
+> **The Code Coverage Regression Guard**  
+> *Zero-tolerance policy for coverage drops in critical systems.*
 
-[![CI Security & Quality](https://github.com/daicer/cocov/actions/workflows/ci.yml/badge.svg)](https://github.com/daicer/cocov/actions/workflows/ci.yml)
-[![NPM Version](https://img.shields.io/npm/v/cocov?style=flat-square)](https://www.npmjs.com/package/cocov)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-2.0.0-purple.svg)](https://npmjs.com/package/cocov)
+[![Coverage](https://img.shields.io/badge/coverage-90%25-success.svg)](./coverage/index.html)
+[![Iron Gates](https://img.shields.io/badge/protocol-IRON_GATES-red.svg)](./STRONG_GATE.md)
 
-<!-- Dogfooding Badges -->
-![Lines](badges/badge-lines.svg)
-![Statements](badges/badge-statements.svg)
-![Branches](badges/badge-branches.svg)
-![Functions](badges/badge-functions.svg)
+Cocov is not just a reporter; it's a **Compliance Engine**. It enforces strict coverage baselines, prevents merge regressions via `husky` hooks, and generates audit-ready artifacts in Markdown and HTML.
 
-Cocov 🚀
-  <p><b>Covering your poop.</b></p>
-</div>
+## 📐 Architecture
+Cocov operates as a strict middleware between your test runner (Vitest/Jest) and your git history.
 
-**Cocov** is not just a gatekeeper; it's an intelligence tool for your codebase. It visualizes coverage velocity, identifies "Rot Areas", and gamifies quality improvement through rich dashboards and historical trend analysis.
+```mermaid
+graph TD
+    A[Test Runner (Vitest)] -->|Coverage JSON| B(Cocov Engine)
+    B -->|Compare| C{Baseline Check}
+    D[Baseline (.cocov/config.json)] --> C
+    C -->|Regression| E[FAIL 🛑]
+    C -->|Improvement| F[UPDATE ✅]
+    C -->|Stable| G[PASS ✅]
+    
+    subgraph Outputs
+        B --> H[HTML Dashboard]
+        B --> I[Markdown Summary]
+        B --> J[Console Report]
+        B --> K[SVG Badges]
+    end
+```
 
 ## ✨ Features
 
-- **📊 HTML Dashboard**: Generate rich, interactive dashboards with `cocov html`.
-- **📈 Trend Analysis**: Track coverage velocity over time with `cocov trends` (History tracked in `.cocov/history.jsonl`).
-- **🤖 LLM & README Ready**: Generate Markdown reports with **Mermaid.js** charts using `cocov markdown`.
-- **💉 Auto-Injection**: Automatically update your `README.md` via CI/CD with `cocov markdown --inject README.md`.
-- **🛡️ Regression Guard**: Prevent coverage drops with `cocov run`.
-- **⚡ SOTA CI/CD**: Scaffold GitHub Actions and Husky hooks instantly with `cocov init`.
-
-## 📦 Installation
-
-```bash
-npm install -g cocov
-# or use via npx
-npx cocov init
-```
+- **📉 Regression Guard**: Automatically detects if coverage drops below the master baseline.
+- **Strict Diff Mode**: Enforces 100% coverage on *changed lines only* (PR mode).
+- **📊 SOTA Reporting**: High-fidelity HTML dashboards and GitHub-ready Markdown summaries.
+- **🤖 LLM Friendly**: Outputs are structured for AI context ingestion.
+- **🛡️ Stack Guard**: Enforces standard dependency validation (e.g. no rogue libs).
 
 ## 🚀 Quick Start
 
-### 1. Initialize
-Run `cocov init` to scaffold your configuration, git hooks, and CI pipelines.
+Initialize Cocov in your project:
 ```bash
 npx cocov init
 ```
+*Sets up `.cocov`, `husky` hooks, and CI workflows automatically.*
 
-### 2. Run Tests & Track History
-Wrap your test command with `cocov run`. This will run your tests, capture coverage, and append it to your local history.
+Run the guard:
 ```bash
-npx cocov run "npm test"
-```
-
-### 3. Generate Reports
-**HTML Dashboard:**
-```bash
-npx cocov html
-# Opens cocov-report.html
-```
-
-**Markdown Report (for CI/LLMs):**
-```bash
-npx cocov markdown
-# Output: cocov-summary.md
-```
-
-**Inject into README:**
-Add markers to your `README.md`:
-```markdown
-<!-- cocov-start -->
-<!-- cocov-end -->
-```
-Then run:
-```bash
-npx cocov markdown --inject README.md
+npm run cocov
 ```
 
 ## 🛠️ Configuration
+Stored in `.cocov/config.json` or `cocov.json`.
 
-`cocov.json` example:
 ```json
 {
-  "total": 0,
-  "stack": {
-    "required": ["typescript", "react"],
-    "forbidden": []
+  "thresholds": {
+    "lines": 90,
+    "functions": 90,
+    "branches": 90
+  },
+  "git": {
+    "enforceClean": true
   }
 }
 ```
 
-## 🤖 CI/CD Integration
-
-Cocov is designed for **GitHub Actions**. Use `cocov init` to generate a workflow:
-
-```yaml
-steps:
-  - uses: actions/checkout@v4
-  - uses: actions/setup-node@v4
-  - run: npm ci
-  - run: npx cocov run "npm test"
-```
-
-## License
-
-ISC
+## 📄 License
+MIT © 2026

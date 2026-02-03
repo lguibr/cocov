@@ -17,7 +17,7 @@
     "provenance": true
   },
   "scripts": {
-    "build": "tsc && tsc-alias",
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint 'src/**/*.ts'",

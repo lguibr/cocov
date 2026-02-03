@@ -14,7 +14,7 @@ export class DiffChecker {
     this.cwd = cwd;
   }
 
-  async checkDiffCoverage(detailedCoverage: Record<string, any>): Promise<DiffResult[]> {
+  async checkDiffCoverage(detailedCoverage: Record<string, any>): Promise<DiffResult[]> { // eslint-disable-line @typescript-eslint/no-explicit-any
     const changedFiles = await getChangedLines(this.cwd);
     const results: DiffResult[] = [];
 
@@ -32,7 +32,7 @@ export class DiffChecker {
         let covered = false;
         let statementFound = false;
 
-        for (const [id, range] of Object.entries(fileCov.statementMap as Record<string, any>)) {
+        for (const [id, range] of Object.entries(fileCov.statementMap as Record<string, any>)) { // eslint-disable-line @typescript-eslint/no-explicit-any
           if (line >= range.start.line && line <= range.end.line) {
             statementFound = true;
             if (fileCov.s[id] > 0) {

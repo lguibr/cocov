@@ -12,7 +12,7 @@ export async function handleBaselineCheck(
   baseline: CocovFile | null,
   options: { dryRun?: boolean },
   historyManager: HistoryManager,
-) {
+): Promise<void> {
   if (!options.dryRun) {
     const context = {
       cwd,

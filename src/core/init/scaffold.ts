@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { execa } from 'execa';
 import { InitAnswers } from './questions.js';
 
-export async function scaffoldConfig(cwd: string, answers: InitAnswers) {
+export async function scaffoldConfig(cwd: string, answers: InitAnswers): Promise<void> {
   const hiddenDir = path.join(cwd, '.cocov');
   await fs.ensureDir(hiddenDir);
   const configPath = path.join(hiddenDir, 'config.json');
@@ -27,7 +27,7 @@ export async function scaffoldConfig(cwd: string, answers: InitAnswers) {
   console.log(chalk.green(`\n✔ Created ${configPath}`));
 }
 
-export async function setupHusky(cwd: string, answers: InitAnswers) {
+export async function setupHusky(cwd: string, answers: InitAnswers): Promise<void> {
   if (!answers.setupHusky || !answers.hooks) return;
 
   try {
@@ -79,7 +79,7 @@ npx cocov run
   }
 }
 
-export async function setupGithub(cwd: string, answers: InitAnswers) {
+export async function setupGithub(cwd: string, answers: InitAnswers): Promise<void> {
   if (!answers.setupGithubAction) return;
 
   const githubDir = path.join(cwd, '.github', 'workflows');
@@ -115,4 +115,29 @@ jobs:
 
   await fs.writeFile(workflowPath, workflow);
   console.log(chalk.green(`\n✔ Created GitHub Action at ${workflowPath}`));
+}
+
+export async function updateGitIgnore(cwd: string, answers: InitAnswers): Promise<void> {
+  if (!answers.updateGitIgnore) return;
+
+  const gitIgnorePath = path.join(cwd, '.gitignore');
+  const ignoreEntry = '.cocov';
+
+  try {
+    if (await fs.pathExists(gitIgnorePath)) {
+      const content = await fs.readFile(gitIgnorePath, 'utf-8');
+      if (!content.includes(ignoreEntry)) {
+        await fs.appendFile(gitIgnorePath, `\n${ignoreEntry}\n`);
+        console.log(chalk.green(`✔ Added ${ignoreEntry} to .gitignore`));
+      } else {
+        console.log(chalk.gray(`ℹ ${ignoreEntry} already in .gitignore`));
+      }
+    } else {
+      await fs.writeFile(gitIgnorePath, `${ignoreEntry}\n`);
+      console.log(chalk.green(`✔ Created .gitignore with ${ignoreEntry}`));
+    }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(chalk.red(`Failed to update .gitignore: ${message}`));
+  }
 }
