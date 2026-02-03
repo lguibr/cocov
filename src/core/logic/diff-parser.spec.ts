@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDiffOutput } from '@/git-utils.js';
+import { extractChangedLines } from '@/git-utils.js';
 
 describe('DiffChecker Parser Spec', () => {
   // Real git diff outputs from varied scenarios
@@ -14,6 +14,7 @@ index abc..def 100644
 +  bar() {
 +    return true;
 +  }
++  // extra line
 + }`,
       expected: { 'src/foo.ts': [15, 16, 17, 18, 19] },
     },
@@ -72,7 +73,7 @@ index abc..def
 @@ -0,0 +${hunk.start},${hunk.count} @@
 ${'+ line\n'.repeat(hunk.count)}`;
 
-    const result = parseDiffOutput(diff);
+    const result = extractChangedLines(diff);
 
     expect(result[p]).toBeDefined();
     expect(result[p].length).toBe(hunk.count);
@@ -80,7 +81,7 @@ ${'+ line\n'.repeat(hunk.count)}`;
   });
 
   it.each(scenarios)('$name', ({ diff, expected }) => {
-    const result = parseDiffOutput(diff);
+    const result = extractChangedLines(diff);
     expect(result).toEqual(expected);
   });
 });

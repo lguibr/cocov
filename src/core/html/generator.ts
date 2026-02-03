@@ -10,6 +10,12 @@ export class HtmlGenerator {
     this.current = current;
   }
 
+  /**
+   * Generates a fully interactive HTML report using the base template.
+   * Injects history and current coverage data as JSON into the HTML.
+   * 
+   * @returns {string} Complete HTML string
+   */
   generate(): string {
     const historyData = JSON.stringify(this.history);
     const currentData = JSON.stringify(this.current);

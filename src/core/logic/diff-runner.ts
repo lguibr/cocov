@@ -2,6 +2,15 @@ import chalk from 'chalk';
 import { readDetailedCoverage } from '../coverage/reader.js';
 import { DiffChecker } from '../../diff-checker.js';
 
+/**
+ * Core Logic: Orchestrates the Diff-Aware Strict Mode.
+ * - Loads detailed coverage.
+ * - Identifies changed lines using Git.
+ * - Cross-references changes with coverage map.
+ * - Exits with error code 1 if ANY changed line is uncovered.
+ * 
+ * @param cwd - Current working directory
+ */
 export async function runDiffCheck(cwd: string): Promise<void> {
   console.log(chalk.blue('\n🔍 Running Diff-Aware Strict Mode...'));
   const diffChecker = new DiffChecker(cwd);

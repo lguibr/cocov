@@ -20,6 +20,16 @@ function getBadgeColor(percentage: number): string {
   return '#e05d44'; // red
 }
 
+/**
+ * Generates an SVG badge for a specific coverage metric.
+ * Supports 'lines', 'branches', 'functions', 'statements', and 'logo'.
+ * Calculates width dynamically based on text length.
+ * 
+ * @param percentage - Coverage percentage (0-100) or Summary object for unified
+ * @param type - Badge type
+ * @param options - Custom label or color
+ * @returns {string} SVG string
+ */
 export function generateBadgeSvg(percentage: number | CoverageSummary, type: BadgeType = 'lines', options: BadgeOptions = {}): string {
   if (type === 'logo') {
     return generateLogoBadge();
@@ -87,6 +97,15 @@ function generateLogoBadge(): string {
   `.trim();
 }
 
+/**
+ * Generates a Diff/Delta badge showing change in coverage.
+ * Color coded: Green (Positive), Red (Negative), Blue (Neutral).
+ * 
+ * @param diff - The difference value (e.g. -1.5, +2.0)
+ * @param type - Metric name (lines, branches, etc)
+ * @param options - Custom label
+ * @returns {string} SVG string
+ */
 export function generateDiffBadge(diff: number, type: BadgeType = 'lines', options: BadgeOptions = {}): string {
   const roundedDiff = Math.round(diff);
   const sign = roundedDiff > 0 ? '+' : roundedDiff < 0 ? '' : '±'; // - is already in number string
@@ -138,6 +157,13 @@ export function generateDiffBadge(diff: number, type: BadgeType = 'lines', optio
   `.trim();
 }
 
+/**
+ * Generates a 'Unified' badge containing all 4 metrics in a single strip.
+ * Useful for concise high-level overview.
+ * 
+ * @param summary - The full coverage summary
+ * @returns {string} SVG string
+ */
 function generateUnifiedBadge(summary: CoverageSummary): string {
   const metrics = ['lines', 'statements', 'functions', 'branches'] as const;
   const labels = { lines: 'lines', statements: 'stmts', functions: 'funcs', branches: 'br' };

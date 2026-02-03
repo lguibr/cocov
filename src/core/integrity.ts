@@ -2,6 +2,13 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 
+/**
+ * Verifies that the coverage data is fresh (created recently).
+ * Prevents using stale coverage data for pre-commit checks.
+ * 
+ * @param cwd - Current working directory
+ * @returns {Promise<boolean>} True if fresh enough, warns if stale
+ */
 export async function verifyCoverageFreshness(cwd: string): Promise<boolean> {
   const summaryPath = path.resolve(cwd, 'coverage/coverage-summary.json');
   if (!(await fs.pathExists(summaryPath))) return false;
@@ -22,6 +29,13 @@ export async function verifyCoverageFreshness(cwd: string): Promise<boolean> {
   return true;
 }
 
+/**
+ * Computes a SHA-256 integrity hash for the coverage data.
+ * Used to ensure data hasn't been tampered with.
+ * 
+ * @param content - Data to hash
+ * @returns {Promise<string>} Hex string of the hash
+ */
 export async function computeIntegrityHash(content: any): Promise<string> { // eslint-disable-line @typescript-eslint/no-explicit-any
   const crypto = await import('crypto');
   return crypto.createHash('sha256').update(JSON.stringify(content)).digest('hex');

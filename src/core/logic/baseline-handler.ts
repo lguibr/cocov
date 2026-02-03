@@ -6,6 +6,19 @@ import { Comparator } from '../../comparator.js';
 import { HistoryManager } from '../../history.js';
 import { getCurrentCommit, getCurrentBranch } from '../../git-utils.js';
 
+/**
+ * Core Logic: Orchestrates the comparison between current coverage and baseline.
+ * - Saves history if not dry-run.
+ * - Handles first-run (no baseline) scenario.
+ * - Updates baseline on improvement.
+ * - Exits with error code 1 on regression.
+ * 
+ * @param cwd - Current working directory
+ * @param current - Current coverage
+ * @param baseline - Loaded baseline
+ * @param options - Run options (e.g. dryRun)
+ * @param historyManager - History manager instance
+ */
 export async function handleBaselineCheck(
   cwd: string,
   current: TotalCoverage,
