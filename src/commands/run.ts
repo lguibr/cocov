@@ -1,11 +1,11 @@
 import chalk from 'chalk';
-import { readBaseline, readCurrentCoverage } from '@/core/coverage/reader.js';
-import { HistoryManager } from '@/history.js';
-import { StackGuard } from '@/stack-guard.js';
-import { runTestCommand } from '@/executor.js';
-import { runDiffCheck } from '@/core/logic/diff-runner.js';
-import { handleBaselineCheck } from '@/core/logic/baseline-handler.js';
-import { verifyCoverageFreshness } from '@/core/integrity.js';
+import { readBaseline, readCurrentCoverage } from '../core/coverage/reader.js';
+import { HistoryManager } from '../history.js';
+import { StackGuard } from '../stack-guard.js';
+import { runTestCommand } from '../executor.js';
+import { runDiffCheck } from '../core/logic/diff-runner.js';
+import { handleBaselineCheck } from '../core/logic/baseline-handler.js';
+import { verifyCoverageFreshness } from '../core/integrity.js';
 
 interface RunOptions {
   dryRun?: boolean;

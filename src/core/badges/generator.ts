@@ -88,20 +88,74 @@ function generateLogoBadge(): string {
   `.trim();
 }
 
+export function generateDiffBadge(diff: number, type: BadgeType = 'lines', options: BadgeOptions = {}): string {
+  const roundedDiff = Math.round(diff);
+  const sign = roundedDiff > 0 ? '+' : roundedDiff < 0 ? '' : '±'; // - is already in number string
+  const label = options.label || type;
+  const valueText = `${sign}${roundedDiff}%`;
+  
+  // Color Logic: Red if regressed (negative), Green if improved (positive), Blue if neutral
+  let color = '#007ec6'; // blue
+  if (roundedDiff > 0) color = '#4c1'; // green
+  if (roundedDiff < 0) color = '#e05d44'; // red
+
+  options.color = color;
+  
+  // We reuse generating a standard badge but with specific text
+  // However, standard badge takes number. We construct custom text?
+  // generateBadgeSvg uses pct for text. 
+  // Let's perform manual generation to control the value text strictly.
+  
+  const logoWidth = 20;
+  // Increase padding factor
+  const labelWidth = label.length * 7 + 12; 
+  const valueWidth = valueText.length * 8 + 12;
+  const totalWidth = logoWidth + labelWidth + valueWidth;
+  const labelX = logoWidth + labelWidth;
+
+  return `
+<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="20" role="img" aria-label="${label}: ${valueText}">
+    <title>${label}: ${valueText}</title>
+    <linearGradient id="s" x2="0" y2="100%">
+        <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+        <stop offset="1" stop-opacity=".1"/>
+    </linearGradient>
+    <clipPath id="r">
+        <rect width="${totalWidth}" height="20" rx="3" fill="#fff"/>
+    </clipPath>
+    <g clip-path="url(#r)">
+        <rect width="${logoWidth + labelWidth}" height="20" fill="#555"/>
+        <rect x="${logoWidth + labelWidth}" width="${valueWidth}" height="20" fill="${color}"/>
+        <rect width="${totalWidth}" height="20" fill="url(#s)"/>
+    </g>
+    <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110">
+        <image x="3" y="3" width="14" height="14" href="data:image/svg+xml;base64,${Buffer.from(COCOV_LOGO).toString('base64')}"/>
+        <text aria-hidden="true" x="${(logoWidth + labelWidth / 2) * 10}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${(labelWidth - 10) * 10}">${label}</text>
+        <text x="${(logoWidth + labelWidth / 2) * 10}" y="140" transform="scale(.1)" fill="#fff" textLength="${(labelWidth - 10) * 10}">${label}</text>
+        <text aria-hidden="true" x="${(labelX + valueWidth / 2) * 10}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${(valueWidth - 10) * 10}">${valueText}</text>
+        <text x="${(labelX + valueWidth / 2) * 10}" y="140" transform="scale(.1)" fill="#fff" textLength="${(valueWidth - 10) * 10}">${valueText}</text>
+    </g>
+</svg>
+  `.trim();
+}
+
 function generateUnifiedBadge(summary: CoverageSummary): string {
   const metrics = ['lines', 'statements', 'functions', 'branches'] as const;
   const labels = { lines: 'lines', statements: 'stmts', functions: 'funcs', branches: 'br' };
   
   let currentX = 0;
-  const logoWidth = 24; // slightly wider for unified
+  const logoWidth = 24; 
   
-  // Calculate segments
+  // Improved width calculation for readability
+  // Char width approx 7px at 110 fontsize scaled 0.1 -> means 7px actual.
+  // We add generous padding.
   const segments = metrics.map(m => {
     const pct = summary[m].pct;
     const rounded = Math.round(pct);
     const color = getBadgeColor(pct);
     const label = labels[m];
-    const width = (label.length + String(rounded).length + 2) * 7 + 10; // rough width calc
+    // label length * 6 + number length * 6 + 15 padding
+    const width = (label.length + String(rounded).length + 3) * 7 + 10; 
     
     return { metric: m, pct: rounded, color, label, width };
   });
@@ -118,13 +172,11 @@ function generateUnifiedBadge(summary: CoverageSummary): string {
         <rect width="${totalWidth}" height="20" rx="3" fill="#fff"/>
     </clipPath>
     <g clip-path="url(#r)">
-        <!-- Logo Background -->
         <rect width="${logoWidth}" height="20" fill="#555"/>
   `;
 
   currentX = logoWidth;
 
-  // Draw backgrounds
   segments.forEach(s => {
     svgContent += `<rect x="${currentX}" width="${s.width}" height="20" fill="${s.color}"/>`;
     currentX += s.width;
@@ -138,11 +190,10 @@ function generateUnifiedBadge(summary: CoverageSummary): string {
 
   currentX = logoWidth;
 
-  // Draw text
   segments.forEach(s => {
     const cx = currentX + s.width / 2;
-    const text = `${s.label}: ${s.pct}%`;
-    const textLength = (s.width - 6) * 10;
+    const text = `${s.label} ${s.pct}%`; // No colon, simpler
+    const textLength = (s.width - 10) * 10; // More conservative text length
     
     svgContent += `
         <text aria-hidden="true" x="${cx * 10}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${textLength}">${text}</text>

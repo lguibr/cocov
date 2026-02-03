@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateBadgeSvg } from './generator.js';
+import { generateBadgeSvg, generateDiffBadge } from './generator.js';
 
 describe('generateBadgeSvg', () => {
   it('generates standard badge (lines)', () => {
@@ -23,9 +23,9 @@ describe('generateBadgeSvg', () => {
       branches: { pct: 50, total: 100, covered: 50, skipped: 0 },
     };
     const svg = generateBadgeSvg(summary, 'unified');
-    expect(svg).toContain('lines: 80%');
-    expect(svg).toContain('stmts: 70%');
-    expect(svg).toContain('br: 50%');
+    expect(svg).toContain('lines 80%');
+    expect(svg).toContain('stmts 70%');
+    expect(svg).toContain('br 50%');
   });
 
   it('returns empty string for invalid percentage on standard badge', () => {
@@ -54,5 +54,24 @@ describe('generateBadgeSvg', () => {
       const svg = generateBadgeSvg(pct);
       expect(svg).toContain(expected);
     });
+  });
+
+  it('generates diff badge (positive)', () => {
+    const svg = generateDiffBadge(5.4, 'lines', { label: 'Δ lines' });
+    expect(svg).toContain('+5%');
+    expect(svg).toContain('#4c1'); // green
+    expect(svg).toContain('Δ lines');
+  });
+
+  it('generates diff badge (negative)', () => {
+    const svg = generateDiffBadge(-2.1, 'lines');
+    expect(svg).toContain('-2%');
+    expect(svg).toContain('#e05d44'); // red
+  });
+
+  it('generates diff badge (neutral)', () => {
+    const svg = generateDiffBadge(0, 'lines');
+    expect(svg).toContain('±0%');
+    expect(svg).toContain('#007ec6'); // blue
   });
 });

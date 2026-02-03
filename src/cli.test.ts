@@ -23,39 +23,38 @@ vi.mock('./commands/markdown.js', () => ({ markdownAction: mocks.markdownAction 
 vi.mock('./commands/badge.js', () => ({ badgeAction: mocks.badgeAction }));
 
 describe('cli', () => {
-  it('creates program with correct name and version', () => {
-    const program = createProgram();
+  it('creates program with correct name and version', async () => {
+    const program = await createProgram();
     expect(program.name()).toBe('cocov');
     expect(program.version()).toBe('1.0.0');
   });
 
   it('triggers init command', async () => {
-    const program = createProgram();
+    const program = await createProgram();
     // Prevent actual exit
     vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
     
     await program.parseAsync(['node', 'cocov', 'init']);
-    // We cannot easily check if runInit was called because dynamic import might not call the mock if not awaited properly?
-    // But createProgram awaits runInit().
-    // Wait, createProgram().action(...) is standard commander.
-    // We need to verify mocks.runInit was called?
-    // Dynamic imports are tricky.
+    expect(mocks.runInit).toHaveBeenCalled();
   });
 
   it('triggers run command', async () => {
-    const program = createProgram();
+    const program = await createProgram();
     // Use 'user' so we don't need 'node' 'cocov' prefix
     await program.parseAsync(['run', 'npm test'], { from: 'user' });
+    expect(mocks.runAction).toHaveBeenCalled();
   });
 
   it('triggers html command', async () => {
-    const program = createProgram();
+    const program = await createProgram();
     await program.parseAsync(['html'], { from: 'user' });
+    expect(mocks.htmlAction).toHaveBeenCalled();
   });
 
   it('triggers badge command', async () => {
-    const program = createProgram();
+    const program = await createProgram();
     await program.parseAsync(['badge'], { from: 'user' });
+    expect(mocks.badgeAction).toHaveBeenCalled();
   });
 
   it('handles init failure', async () => {
@@ -63,7 +62,7 @@ describe('cli', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
     
-    const program = createProgram();
+    const program = await createProgram();
     await program.parseAsync(['init'], { from: 'user' });
     
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Init failed'));

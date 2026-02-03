@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { readDetailedCoverage } from '@/core/coverage/reader.js';
-import { DiffChecker } from '@/diff-checker.js';
+import { readDetailedCoverage } from '../coverage/reader.js';
+import { DiffChecker } from '../../diff-checker.js';
 
 export async function runDiffCheck(cwd: string): Promise<void> {
   console.log(chalk.blue('\n🔍 Running Diff-Aware Strict Mode...'));

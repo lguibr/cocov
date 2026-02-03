@@ -41,12 +41,12 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/cocov.git"
+    "url": "git+https://github.com/lguibr/cocov.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/cocov/issues"
+    "url": "https://github.com/lguibr/cocov/issues"
   },
-  "homepage": "https://github.com/your-org/cocov#readme",
+  "homepage": "https://github.com/lguibr/cocov#readme",
   "dependencies": {
     "chalk": "^5.3.0",
     "cli-table3": "^0.6.3",

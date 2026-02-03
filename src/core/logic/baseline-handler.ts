@@ -1,10 +1,10 @@
 import chalk from 'chalk';
-import { TotalCoverage, CocovFile } from '@/types.js';
-import { writeBaseline } from '@/core/coverage/writer.js';
-import { Reporter } from '@/reporter.js';
-import { Comparator } from '@/comparator.js';
-import { HistoryManager } from '@/history.js';
-import { getCurrentCommit, getCurrentBranch } from '@/git-utils.js';
+import { TotalCoverage, CocovFile } from '../../types.js';
+import { writeBaseline } from '../coverage/writer.js';
+import { Reporter } from '../../reporter.js';
+import { Comparator } from '../../comparator.js';
+import { HistoryManager } from '../../history.js';
+import { getCurrentCommit, getCurrentBranch } from '../../git-utils.js';
 
 export async function handleBaselineCheck(
   cwd: string,

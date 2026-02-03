@@ -40,20 +40,20 @@ export async function setupHusky(cwd: string, answers: InitAnswers): Promise<voi
       let command = '';
 
       if (hook === 'pre-commit') {
-        // SOTA Pre-commit:
+        // Pre-commit Guard
         // 1. Lint Staged (if configured) or Lint
         // 2. Diff-Aware Coverage (Strict) preventing commit of untested code
         command = `
-# SOTA Pre-commit Guard
+# Pre-commit Guard
 npx cocov run --diff --dry-run
 `;
       } else if (hook === 'pre-push') {
-        // SOTA Pre-push:
+        // Pre-push Guard
         // 1. Typecheck
         // 2. Full Test Suite
         // 3. Full Coverage Verification
         command = `
-# SOTA Pre-push Guard
+# Pre-push Guard
 npm run build
 npm test
 npx cocov run
@@ -66,7 +66,7 @@ npx cocov run
         const content = await fs.readFile(hookPath, 'utf-8');
         if (!content.includes('cocov')) {
           await fs.appendFile(hookPath, `\n${command}\n`);
-          console.log(chalk.green(`✔ Injected SOTA Guard into ${hook}`));
+          console.log(chalk.green(`✔ Injected Cocov Guard into ${hook}`));
         }
       } else {
         await fs.writeFile(hookPath, `${command}\n`, { mode: 0o755 });

@@ -1,8 +1,10 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { runInit } from './commands/init.js';
+import { showBanner } from './utils/banner.js';
 
-export function createProgram(): Command {
+export async function createProgram(): Promise<Command> {
+  await showBanner();
   const program = new Command();
 
   program.name('cocov').description('Code coverage regression guard').version('1.0.0');
@@ -78,6 +80,5 @@ export function createProgram(): Command {
 // Or better: Let cli.js be the entry point.
 // We can check process.argv
 if (process.argv[1].endsWith('cli.js') || process.argv[1].endsWith('cli.ts') || process.argv[1].endsWith('cocov')) {
-   const program = createProgram();
-   program.parse();
+   createProgram().then(program => program.parse());
 }
