@@ -32,4 +32,19 @@ describe('askInitQuestions', () => {
     const result = await askInitQuestions(false);
     expect(result.enableStackGuard).toBe(true);
   });
+
+  it('validates prompt definitions', async () => {
+    await askInitQuestions(false);
+    const calls = vi.mocked(prompts).mock.calls;
+    const questionsArray = calls[calls.length - 1][0] as any[];
+    
+    // Find requiredDeps question format
+    const reqDeps = questionsArray.find(q => q.name === 'requiredDeps');
+    expect(reqDeps.format(['a', 'b'])).toEqual(['a', 'b']);
+
+    // Find hooks question type
+    const hooks = questionsArray.find(q => q.name === 'hooks');
+    expect(hooks.type(true)).toBe('multiselect');
+    expect(hooks.type(false)).toBe(null);
+  });
 });

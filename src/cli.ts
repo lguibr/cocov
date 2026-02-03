@@ -76,6 +76,14 @@ export async function createProgram(): Promise<Command> {
       await badgeAction(options);
     });
 
+  program
+    .command('inject-readme')
+    .description('Inject badges into README.md')
+    .action(async () => {
+      const { injectReadmeAction } = await import('./commands/inject-readme.js');
+      await injectReadmeAction();
+    });
+
   return program;
 }
 

@@ -36,4 +36,15 @@ describe('Debug HTML', () => {
     await htmlAction();
     console.log('Done HTML Action');
   });
+
+  it('handles errors gracefully', async () => {
+    vi.mocked(readCurrentCoverage).mockRejectedValue(new Error('HTML fail'));
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as any);
+
+    await htmlAction();
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Error generating HTML report'), expect.anything());
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
 });

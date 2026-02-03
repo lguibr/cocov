@@ -46,6 +46,23 @@ describe('setupHusky', () => {
     );
     expect(fs.writeFile).toHaveBeenCalled();
   });
+
+  it('configures pre-push hook', async () => {
+    vi.mocked(fs.pathExists as any).mockResolvedValue(false);
+    await setupHusky(cwd, { setupHusky: true, hooks: ['pre-push'] });
+    expect(fs.writeFile).toHaveBeenCalledWith(
+        expect.stringContaining('pre-push'),
+        expect.stringContaining('npm run build'),
+        expect.anything()
+    );
+  });
+
+  it('handles errors gracefully', async () => {
+    vi.mocked(execa).mockRejectedValue(new Error('Husky fail'));
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await setupHusky(cwd, { setupHusky: true, hooks: ['pre-commit'] });
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Husky fail'));
+  });
 });
 
 describe('setupGithub', () => {
