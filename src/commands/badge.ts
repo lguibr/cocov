@@ -14,7 +14,7 @@ export async function badgeAction(options: BadgeCommandOptions): Promise<void> {
     const current = await readCurrentCoverage(process.cwd());
     const type = (options.type || 'lines') as BadgeType | 'all' | 'unified' | 'diff-lines' | 'diff-branches' | 'diff-functions' | 'diff-statements';
     
-    // Unified badge
+
     if (type === 'unified') {
       const svg = generateBadgeSvg(current.total, 'unified');
       const outputPath = options.output || 'cocov-badge-unified.svg';
@@ -23,7 +23,7 @@ export async function badgeAction(options: BadgeCommandOptions): Promise<void> {
       return;
     }
     
-    // Diff mode
+
     if (type.startsWith('diff-')) {
        // We need baseline
        const baseline = await readBaseline(process.cwd());
@@ -45,7 +45,7 @@ export async function badgeAction(options: BadgeCommandOptions): Promise<void> {
        return;
     }
 
-    // Single badge logic (standard)
+
     const validMetrics = ['lines', 'functions', 'branches', 'statements'];
 
     // If 'all' is specified, we generate all metrics

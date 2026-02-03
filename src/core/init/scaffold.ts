@@ -9,9 +9,7 @@ export async function scaffoldConfig(cwd: string, answers: InitAnswers): Promise
   await fs.ensureDir(hiddenDir);
   const configPath = path.join(hiddenDir, 'config.json');
 
-  // Check if root exists and warn? or just ignore?
-  // If root exists, migration?
-  // For now, new init = .cocov
+
 
   const config = {
     total: 0,

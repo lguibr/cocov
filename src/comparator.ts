@@ -13,6 +13,15 @@ export interface ComparisonResult {
 }
 
 export class Comparator {
+  /**
+   * Compares current coverage metrics against a baseline.
+   * Calculates differences for lines, statements, functions, and branches.
+   * Determines if a regression occurred (negative diff) or improvement (positive diff).
+   * 
+   * @param current - The current run's coverage summary
+   * @param baseline - The loaded baseline coverage summary
+   * @returns {ComparisonResult} Object containing regression status, improvement status, and detailed metrics
+   */
   compare(current: CoverageSummary, baseline: CoverageSummary): ComparisonResult {
     const keys: (keyof CoverageSummary)[] = ['lines', 'statements', 'functions', 'branches'];
     const metrics: Partial<ComparisonResult['metrics']> = {};

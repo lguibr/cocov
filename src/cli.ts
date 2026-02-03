@@ -3,13 +3,18 @@ import chalk from 'chalk';
 import { runInit } from './commands/init.js';
 import { showBanner } from './utils/banner.js';
 
+/**
+ * Creates the main CLI program instance with all commands configured.
+ * Configures 'init', 'run', 'html', 'markdown', and 'badge' commands.
+ * @returns {Promise<Command>} The configured Commander instance
+ */
 export async function createProgram(): Promise<Command> {
   await showBanner();
   const program = new Command();
 
   program.name('cocov').description('Code coverage regression guard').version('1.0.0');
 
-  // Init Command
+
   program
     .command('init')
     .description('Initialize cocov configuration and hooks')
@@ -26,7 +31,7 @@ export async function createProgram(): Promise<Command> {
       }
     });
 
-  // Run Command (Default)
+
   program
     .command('run', { isDefault: true })
     .description('Run tests and check coverage')
@@ -40,7 +45,7 @@ export async function createProgram(): Promise<Command> {
       await runAction(cmd, options);
     });
 
-  // HTML Report Command
+
   program
     .command('html')
     .description('Generate HTML report')
@@ -49,7 +54,7 @@ export async function createProgram(): Promise<Command> {
       await htmlAction();
     });
 
-  // Markdown Report Command
+
   program
     .command('markdown')
     .description('Generate Markdown report')
@@ -59,7 +64,7 @@ export async function createProgram(): Promise<Command> {
       await markdownAction(options);
     });
 
-  // Badge Command
+
   program
     .command('badge')
     .description('Generate coverage SVG badge')
@@ -74,11 +79,6 @@ export async function createProgram(): Promise<Command> {
   return program;
 }
 
-// Only run if called directly
-// In ESM, checked via import.meta
-// But since we compile to CJS/ESM mixed, simpler to just run if not imported? 
-// Or better: Let cli.js be the entry point.
-// We can check process.argv
 if (process.argv[1].endsWith('cli.js') || process.argv[1].endsWith('cli.ts') || process.argv[1].endsWith('cocov')) {
    createProgram().then(program => program.parse());
 }

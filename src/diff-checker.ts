@@ -14,6 +14,13 @@ export class DiffChecker {
     this.cwd = cwd;
   }
 
+  /**
+   * Checks coverage for only the lines changed in the current git diff.
+   * Maps git diff ranges to istanbul statement maps to determine if changed code is covered.
+   * 
+   * @param detailedCoverage - The file-by-file coverage data (coverage-final.json)
+   * @returns {Promise<DiffResult[]>} A list of files with uncovered changed lines
+   */
   async checkDiffCoverage(detailedCoverage: Record<string, any>): Promise<DiffResult[]> { // eslint-disable-line @typescript-eslint/no-explicit-any
     const changedFiles = await getChangedLines(this.cwd);
     const results: DiffResult[] = [];

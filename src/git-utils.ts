@@ -1,5 +1,9 @@
 import { execa } from 'execa';
 
+/**
+ * Retrieves the current git commit hash (HEAD).
+ * @returns {Promise<string>} Full SHA-1 commit hash or 'unknown'
+ */
 export async function getCurrentCommit(): Promise<string> {
   try {
     const { stdout } = await execa('git', ['rev-parse', 'HEAD']);
@@ -9,6 +13,10 @@ export async function getCurrentCommit(): Promise<string> {
   }
 }
 
+/**
+ * Retrieves the current active git branch name.
+ * @returns {Promise<string>} Branch name or 'unknown'
+ */
 export async function getCurrentBranch(): Promise<string> {
   try {
     const { stdout } = await execa('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
@@ -18,6 +26,10 @@ export async function getCurrentBranch(): Promise<string> {
   }
 }
 
+/**
+ * Gets a list of files changed between HEAD and the working directory.
+ * @returns {Promise<string[]>} Array of changed file paths
+ */
 export async function getChangedFiles(): Promise<string[]> {
   try {
     // Diff against HEAD
