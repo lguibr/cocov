@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import { HistoryManager } from '../history.js';
-import { CoverageManager } from '../coverage.js';
+import { readCurrentCoverage } from '../core/coverage/reader.js';
 import { MarkdownGenerator } from '../markdown-generator.js';
 import { injectIntoFile } from '../injector.js';
 
@@ -9,8 +9,7 @@ export async function markdownAction(options: { inject?: string }) {
     try {
       const historyManager = new HistoryManager(process.cwd());
       const history = await historyManager.readHistory();
-      const manager = new CoverageManager(process.cwd());
-      const current = await manager.readCurrentCoverage();
+      const current = await readCurrentCoverage(process.cwd());
       
       const generator = new MarkdownGenerator(history, current);
       

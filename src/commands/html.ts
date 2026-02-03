@@ -2,15 +2,14 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import { HistoryManager } from '../history.js';
-import { CoverageManager } from '../coverage.js';
+import { readCurrentCoverage } from '../core/coverage/reader.js';
 import { HtmlGenerator } from '../html-generator.js';
 
 export async function htmlAction() {
     try {
       const historyManager = new HistoryManager(process.cwd());
       const history = await historyManager.readHistory();
-      const manager = new CoverageManager(process.cwd());
-      const current = await manager.readCurrentCoverage();
+      const current = await readCurrentCoverage(process.cwd());
       
       const generator = new HtmlGenerator(history, current);
       const html = generator.generate();

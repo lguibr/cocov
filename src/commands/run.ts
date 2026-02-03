@@ -1,4 +1,4 @@
-
+import chalk from 'chalk';
 import { readBaseline, readCurrentCoverage, readDetailedCoverage } from '../core/coverage/reader.js';
 import { writeBaseline } from '../core/coverage/writer.js';
 import { HistoryManager } from '../history.js';
@@ -70,7 +70,7 @@ export async function runAction(testCommand: string, options: any) {
                 process.exit(0);
             }
             console.log(chalk.yellow('No baseline found. Saving current coverage as baseline.'));
-            await manager.writeBaseline(current);
+            await writeBaseline(cwd, current);
             reporter.printTotal(current.total);
             process.exit(0);
         }
@@ -88,7 +88,7 @@ export async function runAction(testCommand: string, options: any) {
                 console.log(chalk.green('\n✔ Coverage improved! (Dry Run: Baseline NOT updated).'));
             } else {
                 console.log(chalk.green('\n✔ Coverage improved! Updating baseline.'));
-                await manager.writeBaseline(current);
+                await writeBaseline(cwd, current);
             }
         } else {
             console.log(chalk.gray('\nCoverage unchanged.'));
