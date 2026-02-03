@@ -18,6 +18,17 @@ describe('scaffoldConfig', () => {
       expect.anything(),
     );
   });
+
+  it('creates .cocov/config.json without stack if disabled', async () => {
+    const cwd = '/cwd';
+    await scaffoldConfig(cwd, { enableStackGuard: false });
+
+    expect(fs.writeJSON).toHaveBeenCalledWith(
+      path.join(cwd, '.cocov', 'config.json'),
+      expect.objectContaining({ stack: undefined }),
+      expect.anything(),
+    );
+  });
 });
 
 describe('setupHusky', () => {
@@ -62,6 +73,23 @@ describe('setupHusky', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     await setupHusky(cwd, { setupHusky: true, hooks: ['pre-commit'] });
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Husky fail'));
+  });
+
+  it('skips unknown hooks', async () => {
+    await setupHusky(cwd, { setupHusky: true, hooks: ['unknown-hook'] });
+    expect(fs.writeFile).not.toHaveBeenCalled();
+    expect(fs.appendFile).not.toHaveBeenCalled();
+  });
+
+
+  it('appends to hook if it exists but missing cocov', async () => {
+    vi.mocked(fs.pathExists as any).mockResolvedValue(true);
+    vi.mocked(fs.readFile).mockResolvedValue('#!/bin/sh\nPrevious Hook');
+    await setupHusky(cwd, { setupHusky: true, hooks: ['pre-commit'] });
+    expect(fs.appendFile).toHaveBeenCalledWith(
+        expect.stringContaining('pre-commit'),
+        expect.stringContaining('cocov'),
+    );
   });
 });
 

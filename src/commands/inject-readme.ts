@@ -14,21 +14,22 @@ export async function injectReadmeAction(): Promise<void> {
   }
 
   // 1. Ensure badges exist (generate 'all')
-  console.log(chalk.blue('ℹ Generating badges...'));
-  await badgeAction({ type: 'all' });
+  console.log(chalk.blue('ℹ Generating badges in assets/badges/...'));
+  await badgeAction({ type: 'all', output: 'assets/badges/cocov-badge.svg' });
 
   // 2. Prepare Injection Payload
-  // We use the unified badge by default as it's the most information dense
-  // We can also add lines/diffs if requested, but 'unified' is the cleanest default.
-  // The user manually added a logo and specific badges.
-  // Let's stick to a standard block that looks good.
-
-  const badgePath = './cocov-badge-unified.svg';
   const reportPath = './coverage/index.html'; // Default location
+  // Use absolute URL so badges render anywhere (NPM, external docs) and users can copy-paste
+  const badgeBaseUrl = 'https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges';
 
+  // User requested "show off" mode: Unified, Individuals, Diffs
   const payload = `
 <!-- COCOV_BADGES_START -->
-[![Cocov Coverage](${badgePath})](${reportPath})
+[![Cocov Unified](${badgeBaseUrl}/cocov-badge-unified.svg)](${reportPath})
+<br>
+[![Lines](${badgeBaseUrl}/cocov-badge-lines.svg)](${reportPath}) [![Statements](${badgeBaseUrl}/cocov-badge-statements.svg)](${reportPath}) [![Functions](${badgeBaseUrl}/cocov-badge-functions.svg)](${reportPath}) [![Branches](${badgeBaseUrl}/cocov-badge-branches.svg)](${reportPath})
+<br>
+[![Diff Lines](${badgeBaseUrl}/cocov-badge-diff-lines.svg)](${reportPath}) [![Diff Statements](${badgeBaseUrl}/cocov-badge-diff-statements.svg)](${reportPath}) [![Diff Functions](${badgeBaseUrl}/cocov-badge-diff-functions.svg)](${reportPath}) [![Diff Branches](${badgeBaseUrl}/cocov-badge-diff-branches.svg)](${reportPath})
 <!-- COCOV_BADGES_END -->
 `.trim();
 

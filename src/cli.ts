@@ -87,6 +87,8 @@ export async function createProgram(): Promise<Command> {
   return program;
 }
 
+/* v8 ignore start */
 if (process.argv[1].endsWith('cli.js') || process.argv[1].endsWith('cli.ts') || process.argv[1].endsWith('cocov')) {
    createProgram().then(program => program.parse());
 }
+/* v8 ignore stop */

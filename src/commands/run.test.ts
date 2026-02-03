@@ -59,4 +59,15 @@ describe('runAction', () => {
     
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
+
+  it('handles unknown errors', async () => {
+    vi.mocked(runTestCommand).mockRejectedValue('String Error');
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await runAction('npm test', {});
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Unknown error'));
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
 });

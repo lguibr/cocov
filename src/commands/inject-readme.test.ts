@@ -35,10 +35,10 @@ describe('injectReadmeAction', () => {
 
     await injectReadmeAction();
 
-    expect(badgeAction).toHaveBeenCalledWith({ type: 'all' });
+    expect(badgeAction).toHaveBeenCalledWith({ type: 'all', output: 'assets/badges/cocov-badge.svg' });
     expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('README.md'),
-        expect.stringContaining('<!-- COCOV_BADGES_START -->'),
+        expect.stringContaining('https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-unified.svg'),
         'utf-8'
     );
     expect(fs.writeFile).toHaveBeenCalledWith(
@@ -56,7 +56,7 @@ describe('injectReadmeAction', () => {
 
     await injectReadmeAction();
 
-    expect(badgeAction).toHaveBeenCalledWith({ type: 'all' }); // Still generates badges
+    expect(badgeAction).toHaveBeenCalledWith({ type: 'all', output: 'assets/badges/cocov-badge.svg' }); // Still generates badges
     expect(fs.writeFile).not.toHaveBeenCalled();
     expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Skipped'));
   });
@@ -70,7 +70,7 @@ describe('injectReadmeAction', () => {
 
     expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('README.md'),
-        expect.stringContaining('<!-- COCOV_BADGES_START -->\n[![Cocov Coverage]'),
+        expect.stringContaining('<!-- COCOV_BADGES_START -->\n[![Cocov Unified]'),
         'utf-8'
     );
      // Should be at the start
@@ -105,8 +105,7 @@ Description
     vi.mocked(fs.readFile).mockResolvedValue(existingContent);
 
     await injectReadmeAction();
-
-    expect(badgeAction).toHaveBeenCalledWith({ type: 'all' });
+    expect(badgeAction).toHaveBeenCalledWith({ type: 'all', output: 'assets/badges/cocov-badge.svg' });
     expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('README.md'),
         expect.stringContaining('<!-- COCOV_BADGES_START -->'),
