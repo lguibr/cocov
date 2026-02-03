@@ -3,10 +3,10 @@
 ## 📊 Coverage Summary
 | Metric | % | Status |
 | :--- | :--- | :--- |
-| **Lines** | 80% | ⚠️ |
-| **Statements** | 80% | ⚠️ |
-| **Functions** | 80% | ⚠️ |
-| **Branches** | 50% | 🚨 |
+| **Lines** | 44.48% | 🚨 |
+| **Statements** | 44.48% | 🚨 |
+| **Functions** | 57.14% | 🚨 |
+| **Branches** | 74.28% | 🚨 |
 
 ## 📈 Trend Analysis
 
@@ -16,9 +16,9 @@ title: Coverage Trend (Lines %)
 ---
 xychart-beta
     title "Coverage History"
-    x-axis [2026-02-02]
+    x-axis [2026-02-02, 2026-02-02, 2026-02-03, 2026-02-03]
     y-axis "Percentage" 0 --> 100
-    line [80]
+    line [80, 80, 0, 0]
 ```
     
 
