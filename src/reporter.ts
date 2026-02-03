@@ -4,6 +4,12 @@ import { ComparisonResult } from './comparator.js';
 import { CoverageSummary } from './types.js';
 
 export class Reporter {
+  /**
+   * Prints the comparison summary table to the console.
+   * Shows baseline vs current metrics and the diff with color coding.
+   * 
+   * @param result - The comparison result to display
+   */
   printSummary(result: ComparisonResult): void {
     const table = new Table({
       head: ['Metric', 'Baseline', 'Current', 'Diff', 'Status'],
@@ -40,6 +46,12 @@ export class Reporter {
     console.log(table.toString());
   }
 
+  /**
+   * Prints the absolute total coverage numbers to the console.
+   * Used for quick verification of current state.
+   * 
+   * @param current - The current coverage summary
+   */
   printTotal(current: CoverageSummary): void {
     console.log(chalk.bold('\nCurrent Coverage:'));
     console.log(`Lines: ${current.lines.pct}%`);

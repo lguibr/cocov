@@ -10,6 +10,14 @@ export class StackGuard {
     this.cwd = cwd;
   }
 
+  /**
+   * Validates the project structure and dependencies against the configuration.
+   * Checks for required dependencies and forbids defined dependencies.
+   * Enforces 'typescript' presence by default if not configured otherwise.
+   * 
+   * @param config - Stack configuration (required/forbidden deps)
+   * @throws {Error} If checking fails or violation found
+   */
   async check(config: StackConfig = {}): Promise<void> {
     console.log(chalk.blue('Running Stack Guard...'));
 

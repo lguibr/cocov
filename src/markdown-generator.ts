@@ -9,6 +9,13 @@ export class MarkdownGenerator {
     this.current = current;
   }
 
+  /**
+   * Generates a comprehensive markdown report.
+   * Includes coverage summary table and mermaid trend chart.
+   * 
+   * @param injectMode - If true, wraps output in injection markers
+   * @returns {string} The formatted markdown string
+   */
   generate(injectMode = false): string {
     const c = this.current.total;
     const historyLines = this.history.map((h) => h.metrics.lines.pct);
