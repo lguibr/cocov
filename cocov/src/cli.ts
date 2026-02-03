@@ -11,6 +11,7 @@ import { runInit } from './commands/init.js';
 import { HistoryManager } from './history.js';
 import { HtmlGenerator } from './html-generator.js';
 import { MarkdownGenerator } from './markdown-generator.js';
+import { DiffChecker } from './diff-checker.js';
 import { getCurrentCommit, getCurrentBranch } from './git-utils.js';
 
 const program = new Command();
@@ -43,6 +44,7 @@ program
   .option('--enforce-stack', 'Enforce stack requirements defined in cocov file')
   .option('--dry-run', 'Simulate checks but do not update baseline')
   .option('-f, --file <file>', 'Path to custom coverage file')
+  .option('--diff', 'Enforce 100% coverage on changed lines (Strict Mode)')
   .action(async (testCommand, options) => {
     console.log(chalk.blue(`Running test command: ${testCommand}...`));
 
@@ -66,6 +68,28 @@ program
       const current = await manager.readCurrentCoverage();
       const reporter = new Reporter();
       const comparator = new Comparator();
+
+      // Diff Check (The Governor)
+      if (options.diff) {
+          console.log(chalk.blue('\n🔍 Running Diff-Aware Strict Mode...'));
+          const diffChecker = new DiffChecker(process.cwd());
+          const detailed = await manager.readDetailedCoverage();
+          
+          if (!detailed) {
+              console.warn(chalk.yellow('⚠ Could not find detailed coverage (coverage-final.json). Skipping diff check.'));
+          } else {
+              const diffResults = await diffChecker.checkDiffCoverage(detailed);
+              if (diffResults.length > 0) {
+                  console.error(chalk.red('\n🛑 Strict Mode Failed: Uncovered changes detected!'));
+                  diffResults.forEach(r => {
+                      console.error(chalk.red(`  ${r.file}: Lines [${r.uncoveredLines.join(', ')}] are not covered.`));
+                  });
+                  process.exit(1);
+              } else {
+                  console.log(chalk.green('✔ Diff Strict Mode Passed: All changes covered.'));
+              }
+          }
+      }
 
       // Record History
       if (!options.dryRun) {

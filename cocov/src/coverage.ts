@@ -17,12 +17,29 @@ export class CoverageManager {
   }
 
   async readCurrentCoverage(): Promise<TotalCoverage> {
+    // Try detailed first for diff features
+    const detailedPath = path.resolve(this.cwd, 'coverage/coverage-final.json');
+    if (await fs.pathExists(detailedPath)) {
+        await fs.readJSON(detailedPath); // Ensure it's readable, but don't assign if not used here
+    }
+
     if (!(await fs.pathExists(this.coverageSummaryPath))) {
       throw new Error(
         `Could not find coverage summary at ${this.coverageSummaryPath}. Did the test command generate it?`,
       );
     }
-    return fs.readJSON(this.coverageSummaryPath);
+    const summary = await fs.readJSON(this.coverageSummaryPath);
+    // Attach detailed if it exists (using a dirty cast or extending the type)
+    // For now, we return summary. Usage of detailed will be essentially a separate read in DiffChecker.
+    return summary;
+  }
+
+  async readDetailedCoverage(): Promise<Record<string, any> | null> {
+      const detailedPath = path.resolve(this.cwd, 'coverage/coverage-final.json');
+      if (await fs.pathExists(detailedPath)) {
+          return fs.readJSON(detailedPath);
+      }
+      return null;
   }
 
   async readBaseline(): Promise<CocovFile | null> {

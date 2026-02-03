@@ -1,8 +1,11 @@
-# Cocov 2.0 🚀
 
-**The Code Coverage Intelligence Engine.**
+<div align="center">
+  <img src="assets/logo.png" alt="Cocov Logo" width="200" />
+  <h1>Cocov 🚀</h1>
+  <p><b>Covering your poop.</b></p>
+</div>
 
-Cocov is not just a gatekeeper; it's an intelligence tool for your codebase. It visualizes coverage velocity, identifies "Rot Areas", and gamifies quality improvement through rich dashboards and historical trend analysis.
+**Cocov** is not just a gatekeeper; it's an intelligence tool for your codebase. It visualizes coverage velocity, identifies "Rot Areas", and gamifies quality improvement through rich dashboards and historical trend analysis.
 
 ## ✨ Features
 

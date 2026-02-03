@@ -5,6 +5,20 @@ import chalk from 'chalk';
 import { execa } from 'execa';
 
 export async function runInit(): Promise<void> {
+  console.log(chalk.cyan(`
+                      --::=-                       
+                 ::-==:::::-==::                   
+               :::===::::::::===:::                
+             :::-===:::::::::-===:::               
+             .......=========-......:              
+                  .:=   ==  ==:                    
+                      .::===                       
+                     ::::::--                      
+                  ----:::::::::                    
+                 ===========-::::                  
+                =======-:::::::::                  
+                  =: :::::::::::                   
+  `));
   console.log(chalk.bold.cyan('\n🚀 Welcome to Cocov: The Code Coverage Gate\n'));
 
   // 1. Detect existing config
@@ -165,3 +179,5 @@ jobs:
 
   console.log(chalk.bold.green('\n✨ Cocov setup complete!'));
 }
+// New Line
+// Another Change
