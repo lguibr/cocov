@@ -3,3 +3,4 @@ dist
 coverage
 cocov
 .DS_Store
+!src/core/coverage

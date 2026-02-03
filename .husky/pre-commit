@@ -1,1 +1,3 @@
-npm test
+npm run build
+node dist/cli.js run "npm run test:coverage"
+git add .cocov/history.jsonl
