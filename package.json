@@ -1,6 +1,6 @@
 {
   "name": "cocov",
-  "version": "3.3.3",
+  "version": "3.3.4",
   "description": "Code coverage intelligence engine & regression guard. Visualizes velocity, trends, and enforces quality gates.",
   "main": "dist/cli.js",
   "type": "module",
