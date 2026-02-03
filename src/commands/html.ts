@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import { HistoryManager } from '../history.js';
-import { readCurrentCoverage } from '../core/coverage/reader.js';
+import { readCurrentCoverage, readDetailedCoverage } from '../core/coverage/reader.js';
 import { HtmlGenerator } from '../core/html/generator.js';
 
 export async function htmlAction(): Promise<void> {
@@ -9,8 +9,9 @@ export async function htmlAction(): Promise<void> {
     const historyManager = new HistoryManager(process.cwd());
     const history = await historyManager.readHistory();
     const current = await readCurrentCoverage(process.cwd());
+    const detailed = await readDetailedCoverage(process.cwd());
 
-    const generator = new HtmlGenerator(history, current);
+    const generator = new HtmlGenerator(history, current, detailed);
     const html = generator.generate();
 
     const outputDir = '.cocov/reports';

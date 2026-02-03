@@ -4,10 +4,12 @@ import { htmlTemplate } from './templates/base.js';
 export class HtmlGenerator {
   private history: HistoryEntry[];
   private current: TotalCoverage;
+  private detailed: Record<string, any> | null;
 
-  constructor(history: HistoryEntry[], current: TotalCoverage) {
+  constructor(history: HistoryEntry[], current: TotalCoverage, detailed: Record<string, any> | null = null) {
     this.history = history;
     this.current = current;
+    this.detailed = detailed;
   }
 
   /**
@@ -19,6 +21,7 @@ export class HtmlGenerator {
   generate(): string {
     const historyData = JSON.stringify(this.history);
     const currentData = JSON.stringify(this.current);
-    return htmlTemplate(historyData, currentData);
+    const detailedData = JSON.stringify(this.detailed || {});
+    return htmlTemplate(historyData, currentData, detailedData);
   }
 }
