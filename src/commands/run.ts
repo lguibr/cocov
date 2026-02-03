@@ -1,6 +1,6 @@
 
-import chalk from 'chalk';
-import { CoverageManager } from '../coverage.js';
+import { readBaseline, readCurrentCoverage, readDetailedCoverage } from '../core/coverage/reader.js';
+import { writeBaseline } from '../core/coverage/writer.js';
 import { HistoryManager } from '../history.js';
 import { StackGuard } from '../stack-guard.js';
 import { Reporter } from '../reporter.js';
@@ -17,26 +17,26 @@ export async function runAction(testCommand: string, options: any) {
     }
 
     try {
-        const manager = new CoverageManager(process.cwd(), options.file);
         const historyManager = new HistoryManager(process.cwd());
+        const cwd = process.cwd();
 
-        const baseline = await manager.readBaseline();
+        const baseline = await readBaseline(cwd);
 
         if (options.enforceStack && baseline?.stack) {
-            const guard = new StackGuard(process.cwd());
+            const guard = new StackGuard(cwd);
             await guard.check(baseline.stack);
         }
 
         await runTestCommand(testCommand);
 
-        const current = await manager.readCurrentCoverage();
+        const current = await readCurrentCoverage(cwd, options.file);
         const reporter = new Reporter();
         const comparator = new Comparator();
 
         if (options.diff) {
             console.log(chalk.blue('\n🔍 Running Diff-Aware Strict Mode...'));
-            const diffChecker = new DiffChecker(process.cwd());
-            const detailed = await manager.readDetailedCoverage();
+            const diffChecker = new DiffChecker(cwd);
+            const detailed = await readDetailedCoverage(cwd);
 
             if (!detailed) {
                 console.warn(chalk.yellow('⚠ Could not find detailed coverage (coverage-final.json). Skipping diff check.'));
