@@ -75,6 +75,13 @@ describe('setupHusky', () => {
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Husky fail'));
   });
 
+  it('handles non-Error exceptions', async () => {
+    vi.mocked(execa).mockRejectedValue('String Error');
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await setupHusky(cwd, { setupHusky: true, hooks: ['pre-commit'] });
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('String Error'));
+  });
+
   it('skips unknown hooks', async () => {
     await setupHusky(cwd, { setupHusky: true, hooks: ['unknown-hook'] });
     expect(fs.writeFile).not.toHaveBeenCalled();
@@ -84,7 +91,7 @@ describe('setupHusky', () => {
 
   it('appends to hook if it exists but missing cocov', async () => {
     vi.mocked(fs.pathExists as any).mockResolvedValue(true);
-    vi.mocked(fs.readFile).mockResolvedValue('#!/bin/sh\nPrevious Hook');
+    vi.mocked(fs.readFile as any).mockResolvedValue('#!/bin/sh\nPrevious Hook');
     await setupHusky(cwd, { setupHusky: true, hooks: ['pre-commit'] });
     expect(fs.appendFile).toHaveBeenCalledWith(
         expect.stringContaining('pre-commit'),
@@ -128,7 +135,7 @@ describe('updateGitIgnore', () => {
 
   it('appends to .gitignore if exists but missing entry', async () => {
     vi.mocked(fs.pathExists as any).mockResolvedValue(true); // eslint-disable-line @typescript-eslint/no-explicit-any
-    vi.mocked(fs.readFile).mockResolvedValue('node_modules\n');
+    vi.mocked(fs.readFile as any).mockResolvedValue('node_modules\n');
     await updateGitIgnore('/cwd', { updateGitIgnore: true });
     expect(fs.appendFile).toHaveBeenCalledWith(
       expect.stringContaining('.gitignore'),
@@ -138,9 +145,23 @@ describe('updateGitIgnore', () => {
 
   it('skips appending if entry already exists', async () => {
     vi.mocked(fs.pathExists as any).mockResolvedValue(true); // eslint-disable-line @typescript-eslint/no-explicit-any
-    vi.mocked(fs.readFile).mockResolvedValue('node_modules\n.cocov\n');
+    vi.mocked(fs.readFile as any).mockResolvedValue('node_modules\n.cocov\n');
     await updateGitIgnore('/cwd', { updateGitIgnore: true });
     expect(fs.appendFile).not.toHaveBeenCalled();
+  });
+
+  it('handles errors gracefully', async () => {
+    vi.mocked(fs.pathExists as any).mockRejectedValue(new Error('FS Error'));
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await updateGitIgnore('/cwd', { updateGitIgnore: true });
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('FS Error'));
+  });
+
+  it('handles non-Error exceptions', async () => {
+    vi.mocked(fs.pathExists as any).mockRejectedValue('String FS Error');
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await updateGitIgnore('/cwd', { updateGitIgnore: true });
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('String FS Error'));
   });
 });
 

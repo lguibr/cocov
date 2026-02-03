@@ -52,6 +52,13 @@ export async function handleBaselineCheck(
     return;
   }
 
+  // Check for invalid baseline format (e.g. user manually set total to a number)
+  if (typeof baseline.total === 'number') {
+      console.log(chalk.yellow('Baseline total format mismatch (found number, expected summary). Resetting baseline to valid format.'));
+      await writeBaseline(cwd, current);
+      return;
+  }
+
   // Compare total summaries
   const result = comparator.compare(current.total, baseline.total);
   reporter.printSummary(result);

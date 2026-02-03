@@ -25,6 +25,7 @@ export interface StackConfig {
 export interface CocovFile {
   stack?: StackConfig;
   total: CoverageSummary;
+  threshold?: number;
   [key: string]: unknown;
 }
 

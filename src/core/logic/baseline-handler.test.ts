@@ -69,4 +69,13 @@ describe('handleBaselineCheck', () => {
     await handleBaselineCheck(cwd, current, baseline, { dryRun: true }, mockHistory);
     expect(writer.writeBaseline).not.toHaveBeenCalled();
   });
+
+  it('resets baseline if total is a number (legacy format)', async () => {
+    const legacyBaseline = { total: 80 } as any;
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    await handleBaselineCheck(cwd, current, legacyBaseline, { dryRun: false }, mockHistory);
+    
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Baseline total format mismatch'));
+    expect(writer.writeBaseline).toHaveBeenCalledWith(cwd, current);
+  });
 });

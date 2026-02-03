@@ -6,7 +6,7 @@ import { runTestCommand } from '../executor.js';
 import { runDiffCheck } from '../core/logic/diff-runner.js';
 import { handleBaselineCheck } from '../core/logic/baseline-handler.js';
 import { verifyCoverageFreshness } from '../core/integrity.js';
-import { validatePerFileThresholds } from '../core/logic/threshold-validator.js';
+import { enforceThresholds, ThresholdError } from '../core/logic/threshold-gate.js';
 
 interface RunOptions {
   dryRun?: boolean;
@@ -43,17 +43,16 @@ export async function runAction(testCommand: string, options: RunOptions): Promi
 
     const current = await readCurrentCoverage(cwd, options.file);
     
-    // Enforce 90% per-file coverage
-    const thresholdResult = validatePerFileThresholds(current, 90);
-    if (!thresholdResult.pass) {
-       console.error(chalk.red('\n🛑 Per-File Coverage Threshold Failed (Min 90%):'));
-       thresholdResult.violations.forEach(v => console.error(chalk.red(`  x ${v}`)));
-       process.exit(1);
-    }
+    // Use configured threshold or default to 0 (disabled)
+    enforceThresholds(current, baseline);
+
 
     await handleBaselineCheck(cwd, current, baseline, options, historyManager);
   } catch (error: unknown) {
-    if (error instanceof Error) {
+    if (error instanceof ThresholdError) {
+      console.error(chalk.red(`\n🛑 ${error.message} (Min ${error.threshold}%):`));
+      error.violations.forEach(v => console.error(chalk.red(`  x ${v}`)));
+    } else if (error instanceof Error) {
       console.error(chalk.red(`Error: ${error.message}`));
     } else {
       console.error(chalk.red(`Error: Unknown error`));

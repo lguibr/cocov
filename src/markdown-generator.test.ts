@@ -13,9 +13,9 @@ describe('MarkdownGenerator', () => {
         statements: { pct: 50 },
         functions: { pct: 50 },
         branches: { pct: 50 },
-      },
+      } as any,
     },
-  ];
+  ] as any;
 
   const mockCurrent: TotalCoverage = {
     total: {
@@ -24,7 +24,7 @@ describe('MarkdownGenerator', () => {
       functions: { pct: 90 },
       branches: { pct: 95 },
     },
-  };
+  } as any;
 
   it('generates report with correct metrics', () => {
     const generator = new MarkdownGenerator(mockHistory, mockCurrent);
@@ -66,6 +66,21 @@ describe('MarkdownGenerator', () => {
     const md = generator.generate();
     
     expect(md).toContain('_No history available yet._');
+  });
+
+  it('generates correct icon for low coverage (<80%)', () => {
+    const lowCoverage = {
+      total: {
+        lines: { pct: 70 },
+        statements: { pct: 70 },
+        functions: { pct: 70 },
+        branches: { pct: 70 },
+      }
+    } as any;
+    const generator = new MarkdownGenerator([], lowCoverage);
+    const md = generator.generate();
+    
+    expect(md).toContain('🚨');
   });
 
   it('wraps content in markers when injectMode is true', () => {

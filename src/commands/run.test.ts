@@ -6,6 +6,7 @@ import { StackGuard } from '@/stack-guard.js';
 import { runTestCommand } from '@/executor.js';
 import { runDiffCheck } from '@/core/logic/diff-runner.js';
 import { handleBaselineCheck } from '@/core/logic/baseline-handler.js';
+import { enforceThresholds, ThresholdError } from '@/core/logic/threshold-gate.js';
 import { verifyCoverageFreshness } from '@/core/integrity.js';
 
 vi.mock('../core/coverage/reader.js');
@@ -14,7 +15,15 @@ vi.mock('../stack-guard.js');
 vi.mock('../executor.js');
 vi.mock('../core/logic/diff-runner.js');
 vi.mock('../core/logic/baseline-handler.js');
+vi.mock('../core/logic/baseline-handler.js');
 vi.mock('../core/integrity.js');
+vi.mock('../core/logic/threshold-gate.js', async () => {
+  const actual = await vi.importActual('../core/logic/threshold-gate.js');
+  return {
+    ...actual,
+    enforceThresholds: vi.fn(),
+  };
+});
 
 describe('runAction', () => {
   beforeEach(() => {
@@ -68,6 +77,21 @@ describe('runAction', () => {
     await runAction('npm test', {});
 
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Unknown error'));
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('handles ThresholdError', async () => {
+    // @ts-ignore
+    vi.mocked(enforceThresholds).mockImplementation(() => {
+      throw new ThresholdError(['file.ts: 50%'], 80);
+    });
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await runAction('npm test', {});
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Per-File Coverage Threshold Failed (Min 80%):'));
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('x file.ts: 50%'));
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 });
