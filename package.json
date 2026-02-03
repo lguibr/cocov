@@ -1,6 +1,6 @@
 {
   "name": "cocov",
-  "version": "2.0.0",
+  "version": "3.3.3",
   "description": "Code coverage intelligence engine & regression guard. Visualizes velocity, trends, and enforces quality gates.",
   "main": "dist/cli.js",
   "type": "module",
@@ -13,8 +13,7 @@
     "LICENSE"
   ],
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
@@ -23,6 +22,7 @@
     "lint": "eslint 'src/**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
     "cocov": "node dist/cli.js",
+    "pub": "npm publish --no-provenance --access public",
     "prepublishOnly": "npm run build",
     "prepare": "husky"
   },
