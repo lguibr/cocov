@@ -1,4 +1,3 @@
-
 export const htmlTemplate = (historyData: string, currentData: string) => `
 <!DOCTYPE html>
 <html lang="en">
@@ -65,7 +64,7 @@ export const htmlTemplate = (historyData: string, currentData: string) => `
         const dataLines = history.map(h => h.metrics.lines.pct);
         
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: timestamps,
                 datasets: [{

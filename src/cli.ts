@@ -1,8 +1,6 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import fs from 'fs-extra'; // Added fs-extra import
 import { runInit } from './commands/init.js';
-import { MarkdownGenerator } from './markdown-generator.js';
 
 const program = new Command();
 
@@ -25,7 +23,6 @@ program
     }
   });
 
-
 // Run Command (Default)
 program
   .command('run', { isDefault: true })
@@ -36,8 +33,8 @@ program
   .option('-f, --file <file>', 'Path to custom coverage file')
   .option('--diff', 'Enforce 100% coverage on changed lines (Strict Mode)')
   .action(async (cmd, options) => {
-      const { runAction } = await import('./commands/run.js');
-      await runAction(cmd, options);
+    const { runAction } = await import('./commands/run.js');
+    await runAction(cmd, options);
   });
 
 // HTML Report Command
@@ -48,7 +45,6 @@ program
     const { htmlAction } = await import('./commands/html.js');
     await htmlAction();
   });
-
 
 // Markdown Report Command
 program
@@ -64,10 +60,12 @@ program
 program
   .command('badge')
   .description('Generate coverage SVG badge')
-  .option('-o, --output <file>', 'Output file path', 'cocov-badge.svg')
+  .option('-o, --output <file>', 'Output file path')
+  .option('--type <type>', 'Badge type (lines, branches, functions, statements, logo, all)', 'lines')
+  .option('--logo', 'Generate logo badge')
   .action(async (options) => {
-      const { badgeAction } = await import('./commands/badge.js');
-      await badgeAction(options);
+    const { badgeAction } = await import('./commands/badge.js');
+    await badgeAction(options);
   });
 
 program.parse();

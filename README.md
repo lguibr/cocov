@@ -6,6 +6,13 @@
 [![CI Security & Quality](https://github.com/daicer/cocov/actions/workflows/ci.yml/badge.svg)](https://github.com/daicer/cocov/actions/workflows/ci.yml)
 [![NPM Version](https://img.shields.io/npm/v/cocov?style=flat-square)](https://www.npmjs.com/package/cocov)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+<!-- Dogfooding Badges -->
+![Lines](badges/badge-lines.svg)
+![Statements](badges/badge-statements.svg)
+![Branches](badges/badge-branches.svg)
+![Functions](badges/badge-functions.svg)
+
 Cocov 🚀
   <p><b>Covering your poop.</b></p>
 </div>

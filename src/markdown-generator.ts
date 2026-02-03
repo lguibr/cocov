@@ -1,4 +1,3 @@
-
 import { HistoryEntry, TotalCoverage } from './types.js';
 
 export class MarkdownGenerator {
@@ -10,11 +9,10 @@ export class MarkdownGenerator {
     this.current = current;
   }
 
-
   generate(injectMode = false): string {
     const c = this.current.total;
-    const historyLines = this.history.map(h => h.metrics.lines.pct);
-    const dateLabels = this.history.map(h => new Date(h.timestamp).toISOString().split('T')[0]);
+    const historyLines = this.history.map((h) => h.metrics.lines.pct);
+    const dateLabels = this.history.map((h) => new Date(h.timestamp).toISOString().split('T')[0]);
 
     // Mermaid XY Chart (Beta) or Line Chart
     const mermaidChart = `
@@ -24,9 +22,9 @@ title: Coverage Trend (Lines %)
 ---
 xychart-beta
     title "Coverage History"
-    x-axis [${dateLabels.join(", ")}]
+    x-axis [${dateLabels.join(', ')}]
     y-axis "Percentage" 0 --> 100
-    line [${historyLines.join(", ")}]
+    line [${historyLines.join(', ')}]
 \`\`\`
     `;
 
@@ -48,7 +46,7 @@ ${this.history.length > 0 ? mermaidChart : '_No history available yet._'}
     `.trim();
 
     if (injectMode) {
-        return `<!-- cocov-start -->\n${report}\n<!-- cocov-end -->`;
+      return `<!-- cocov-start -->\n${report}\n<!-- cocov-end -->`;
     }
     return report;
   }

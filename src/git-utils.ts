@@ -1,4 +1,3 @@
-
 import { execa } from 'execa';
 
 export async function getCurrentCommit(): Promise<string> {
@@ -33,12 +32,12 @@ export async function getChangedFiles(): Promise<string[]> {
  * Gets a map of changed files and their changed line numbers relative to HEAD.
  */
 export async function getChangedLines(cwd: string): Promise<Record<string, number[]>> {
-    try {
-        const { stdout } = await execa('git', ['diff', '-U0', 'HEAD', '--relative'], { cwd });
-        return parseDiffOutput(stdout);
-    } catch {
-        return {};
-    }
+  try {
+    const { stdout } = await execa('git', ['diff', '-U0', 'HEAD', '--relative'], { cwd });
+    return parseDiffOutput(stdout);
+  } catch {
+    return {};
+  }
 }
 
 /**
@@ -46,32 +45,32 @@ export async function getChangedLines(cwd: string): Promise<Record<string, numbe
  * @param diff Raw git diff output
  */
 export function parseDiffOutput(diff: string): Record<string, number[]> {
-    const changes: Record<string, number[]> = {};
-    let currentFile: string | null = null;
+  const changes: Record<string, number[]> = {};
+  let currentFile: string | null = null;
 
-    const lines = diff.split('\n');
-    for (const line of lines) {
-        if (line.startsWith('diff --git')) {
-            const parts = line.split(' ');
-            const bPart = parts[parts.length - 1];
-            if (bPart.startsWith('b/')) {
-                currentFile = bPart.substring(2);
-            } else {
-                currentFile = bPart;
-            }
-            changes[currentFile] = [];
-        } else if (line.startsWith('@@') && currentFile) {
-            const match = line.match(/\+(\d+)(?:,(\d+))?/);
-            if (match) {
-                const start = parseInt(match[1], 10);
-                const count = match[2] ? parseInt(match[2], 10) : 1;
-                
-                if (!changes[currentFile]) changes[currentFile] = [];
-                for (let i = 0; i < count; i++) {
-                    changes[currentFile].push(start + i);
-                }
-            }
+  const lines = diff.split('\n');
+  for (const line of lines) {
+    if (line.startsWith('diff --git')) {
+      const parts = line.split(' ');
+      const bPart = parts[parts.length - 1];
+      if (bPart.startsWith('b/')) {
+        currentFile = bPart.substring(2);
+      } else {
+        currentFile = bPart;
+      }
+      changes[currentFile] = [];
+    } else if (line.startsWith('@@') && currentFile) {
+      const match = line.match(/\+(\d+)(?:,(\d+))?/);
+      if (match) {
+        const start = parseInt(match[1], 10);
+        const count = match[2] ? parseInt(match[2], 10) : 1;
+
+        if (!changes[currentFile]) changes[currentFile] = [];
+        for (let i = 0; i < count; i++) {
+          changes[currentFile].push(start + i);
         }
+      }
     }
-    return changes;
+  }
+  return changes;
 }

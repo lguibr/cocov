@@ -1,4 +1,3 @@
-
 import { HistoryEntry, TotalCoverage } from '@/types.js';
 import { htmlTemplate } from './templates/base.js';
 

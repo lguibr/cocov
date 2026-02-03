@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import fs from 'fs-extra';
 import { handleBaselineCheck } from './baseline-handler.js';
@@ -14,55 +13,60 @@ vi.mock('../../git-utils.js');
 vi.mock('fs-extra');
 
 describe('handleBaselineCheck', () => {
-    const mockHistory = { append: vi.fn() } as any;
-    const cwd = '/test';
-    const current = { total: { lines: { pct: 80 } } } as any;
-    const baseline = { total: { lines: { pct: 80 } } } as any;
+  const mockHistory = { append: vi.fn() } as any;
+  const cwd = '/test';
+  const current = { total: { lines: { pct: 80 } } } as any;
+  const baseline = { total: { lines: { pct: 80 } } } as any;
 
-    beforeEach(() => {
-        vi.clearAllMocks();
-        vi.mocked(writer.writeBaseline).mockResolvedValue();
-        vi.mocked(git.getCurrentCommit).mockResolvedValue('abc');
-        vi.mocked(git.getCurrentBranch).mockResolvedValue('main');
-        
-        // Default comparator mock
-        vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ isRegression: false, improved: false } as any);
-    });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(writer.writeBaseline).mockResolvedValue();
+    vi.mocked(git.getCurrentCommit).mockResolvedValue('abc');
+    vi.mocked(git.getCurrentBranch).mockResolvedValue('main');
 
-    it('writes baseline if none exists (not dry run)', async () => {
-        const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-        await handleBaselineCheck(cwd, current, null, { dryRun: false }, mockHistory);
-        expect(writer.writeBaseline).toHaveBeenCalledWith(cwd, current);
-        expect(mockHistory.append).toHaveBeenCalled();
-        expect(exitSpy).toHaveBeenCalledWith(0);
-        // Should not write file directly, only via writer
-        expect(fs.writeFile).not.toHaveBeenCalled(); 
-    });
+    // Default comparator mock
+    vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({
+      isRegression: false,
+      improved: false,
+    } as any);
+  });
 
-    it('does not write baseline if none exists (dry run)', async () => {
-        const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-        await handleBaselineCheck(cwd, current, null, { dryRun: true }, mockHistory);
-        expect(writer.writeBaseline).not.toHaveBeenCalled();
-        expect(exitSpy).toHaveBeenCalledWith(0);
-    });
+  it('writes baseline if none exists (not dry run)', async () => {
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    await handleBaselineCheck(cwd, current, null, { dryRun: false }, mockHistory);
+    expect(writer.writeBaseline).toHaveBeenCalledWith(cwd, current);
+    expect(mockHistory.append).toHaveBeenCalled();
+    expect(exitSpy).toHaveBeenCalledWith(0);
+    // Should not write file directly, only via writer
+    expect(fs.writeFile).not.toHaveBeenCalled();
+  });
 
-    it('exits on regression', async () => {
-        vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ isRegression: true } as any);
-        const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-        
-        await handleBaselineCheck(cwd, current, baseline, {}, mockHistory);
-        expect(exitSpy).toHaveBeenCalledWith(1);
-    });
+  it('does not write baseline if none exists (dry run)', async () => {
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    await handleBaselineCheck(cwd, current, null, { dryRun: true }, mockHistory);
+    expect(writer.writeBaseline).not.toHaveBeenCalled();
+    expect(exitSpy).toHaveBeenCalledWith(0);
+  });
 
-    it('updates baseline on improvement', async () => {
-        vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ improved: true } as any);
-        await handleBaselineCheck(cwd, current, baseline, { dryRun: false }, mockHistory);
-        expect(writer.writeBaseline).toHaveBeenCalledWith(cwd, current);
-    });
+  it('exits on regression', async () => {
+    vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({
+      isRegression: true,
+    } as any);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    it('does not update baseline on improvement (dry run)', async () => {
-        vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ improved: true } as any);
-        await handleBaselineCheck(cwd, current, baseline, { dryRun: true }, mockHistory);
-        expect(writer.writeBaseline).not.toHaveBeenCalled();
-    });
+    await handleBaselineCheck(cwd, current, baseline, {}, mockHistory);
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('updates baseline on improvement', async () => {
+    vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ improved: true } as any);
+    await handleBaselineCheck(cwd, current, baseline, { dryRun: false }, mockHistory);
+    expect(writer.writeBaseline).toHaveBeenCalledWith(cwd, current);
+  });
+
+  it('does not update baseline on improvement (dry run)', async () => {
+    vi.spyOn(comparator.Comparator.prototype, 'compare').mockReturnValue({ improved: true } as any);
+    await handleBaselineCheck(cwd, current, baseline, { dryRun: true }, mockHistory);
+    expect(writer.writeBaseline).not.toHaveBeenCalled();
+  });
 });

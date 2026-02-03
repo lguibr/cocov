@@ -1,4 +1,3 @@
-
 import fs from 'fs-extra';
 import path from 'path';
 import { CoverageSummary, HistoryEntry, RunContext } from './types.js';
@@ -9,7 +8,6 @@ export class HistoryManager {
   constructor(cwd: string) {
     this.historyPath = path.join(cwd, '.cocov', 'history.jsonl');
   }
-
 
   async append(metrics: CoverageSummary, context: RunContext): Promise<void> {
     await fs.ensureDir(path.dirname(this.historyPath));

@@ -1,4 +1,3 @@
-
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import path from 'path';
@@ -6,7 +5,8 @@ import { askInitQuestions } from '../core/init/questions.js';
 import { scaffoldConfig, setupHusky, setupGithub } from '../core/init/scaffold.js';
 
 export async function runInit(): Promise<void> {
-  console.log(chalk.cyan(`
+  console.log(
+    chalk.cyan(`
                       --::=-                       
                  ::-==:::::-==::                   
                :::===::::::::===:::                
@@ -19,7 +19,8 @@ export async function runInit(): Promise<void> {
                  ===========-::::                  
                 =======-:::::::::                  
                   =: :::::::::::                   
-  `));
+  `),
+  );
   console.log(chalk.bold.cyan('\n🚀 Welcome to Cocov: The Code Coverage Gate\n'));
 
   const cwd = process.cwd();
@@ -30,14 +31,14 @@ export async function runInit(): Promise<void> {
 
   // Handle cancellation/overwrite check
   if (exists && answers.overwrite === false) {
-      console.log(chalk.yellow('Skipping configuration setup.'));
-      return;
+    console.log(chalk.yellow('Skipping configuration setup.'));
+    return;
   }
 
   // Handle cancellation of questions
   if (answers.enableStackGuard === undefined && answers.overwrite !== false) {
-      // If user Ctrl+C'd prompts
-      return;
+    // If user Ctrl+C'd prompts
+    return;
   }
 
   await scaffoldConfig(cwd, answers);

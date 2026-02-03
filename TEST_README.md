@@ -22,7 +22,7 @@ xychart-beta
     title "Coverage History"
     x-axis [2026-02-02]
     y-axis "Percentage" 0 --> 100
-    line [80]
+    bar [80]
 ```
     
 

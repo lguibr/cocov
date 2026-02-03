@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as gitUtils from './git-utils.js';
 import { execa } from 'execa';
@@ -20,9 +19,9 @@ describe('git-utils', () => {
     });
 
     it('returns unknown on failure', async () => {
-        vi.mocked(execa).mockRejectedValue(new Error('fail'));
-        const commit = await gitUtils.getCurrentCommit();
-        expect(commit).toBe('unknown');
+      vi.mocked(execa).mockRejectedValue(new Error('fail'));
+      const commit = await gitUtils.getCurrentCommit();
+      expect(commit).toBe('unknown');
     });
   });
 
@@ -34,15 +33,15 @@ describe('git-utils', () => {
     });
 
     it('returns unknown on failure', async () => {
-        vi.mocked(execa).mockRejectedValue(new Error('fail'));
-        const branch = await gitUtils.getCurrentBranch();
-        expect(branch).toBe('unknown');
+      vi.mocked(execa).mockRejectedValue(new Error('fail'));
+      const branch = await gitUtils.getCurrentBranch();
+      expect(branch).toBe('unknown');
     });
   });
 
   describe('getChangedLines', () => {
-      it('returns changed lines map on success', async () => {
-          const mockDiff = `diff --git a/foo.ts b/foo.ts
+    it('returns changed lines map on success', async () => {
+      const mockDiff = `diff --git a/foo.ts b/foo.ts
 index e43e2b4..6dd38e3 100644
 --- a/foo.ts
 +++ b/foo.ts
@@ -50,16 +49,16 @@ index e43e2b4..6dd38e3 100644
 +line1
 +line2
 `;
-          vi.mocked(execa).mockResolvedValue({ stdout: mockDiff } as any);
-          
-          const result = await gitUtils.getChangedLines(process.cwd());
-          expect(result['foo.ts']).toEqual([11, 12]);
-      });
+      vi.mocked(execa).mockResolvedValue({ stdout: mockDiff } as any);
 
-      it('returns empty object on failure', async () => {
-          vi.mocked(execa).mockRejectedValue(new Error('fail'));
-          const result = await gitUtils.getChangedLines(process.cwd());
-          expect(result).toEqual({});
-      });
+      const result = await gitUtils.getChangedLines(process.cwd());
+      expect(result['foo.ts']).toEqual([11, 12]);
+    });
+
+    it('returns empty object on failure', async () => {
+      vi.mocked(execa).mockRejectedValue(new Error('fail'));
+      const result = await gitUtils.getChangedLines(process.cwd());
+      expect(result).toEqual({});
+    });
   });
 });

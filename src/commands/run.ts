@@ -7,41 +7,48 @@ import { runDiffCheck } from '@/core/logic/diff-runner.js';
 import { handleBaselineCheck } from '@/core/logic/baseline-handler.js';
 import { verifyCoverageFreshness } from '@/core/integrity.js';
 
-export async function runAction(testCommand: string, options: any) {
-    console.log(chalk.blue(`Running test command: ${testCommand}...`));
+interface RunOptions {
+  dryRun?: boolean;
+  enforceStack?: boolean;
+  diff?: boolean;
+  file?: string;
+}
 
-    if (options.dryRun) {
-        console.log(chalk.yellow('🚧 DRY RUN MODE: No baseline updates.'));
+export async function runAction(testCommand: string, options: RunOptions): Promise<void> {
+  console.log(chalk.blue(`Running test command: ${testCommand}...`));
+
+  if (options.dryRun) {
+    console.log(chalk.yellow('🚧 DRY RUN MODE: No baseline updates.'));
+  }
+
+  try {
+    await verifyCoverageFreshness(process.cwd());
+
+    const historyManager = new HistoryManager(process.cwd());
+    const cwd = process.cwd();
+
+    const baseline = await readBaseline(cwd);
+
+    if (options.enforceStack && baseline?.stack) {
+      const guard = new StackGuard(cwd);
+      await guard.check(baseline.stack);
     }
 
-    try {
-        await verifyCoverageFreshness(process.cwd());
-        
-        const historyManager = new HistoryManager(process.cwd());
-        const cwd = process.cwd();
+    await runTestCommand(testCommand);
 
-        const baseline = await readBaseline(cwd);
-
-        if (options.enforceStack && baseline?.stack) {
-            const guard = new StackGuard(cwd);
-            await guard.check(baseline.stack);
-        }
-
-        await runTestCommand(testCommand);
-
-        if (options.diff) {
-            await runDiffCheck(cwd);
-        }
-
-        const current = await readCurrentCoverage(cwd, options.file);
-        
-        await handleBaselineCheck(cwd, current, baseline, options, historyManager);
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(chalk.red(`Error: ${error.message}`));
-        } else {
-            console.error(chalk.red(`Error: Unknown error`));
-        }
-        process.exit(1);
+    if (options.diff) {
+      await runDiffCheck(cwd);
     }
+
+    const current = await readCurrentCoverage(cwd, options.file);
+
+    await handleBaselineCheck(cwd, current, baseline, options, historyManager);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(chalk.red(`Error: ${error.message}`));
+    } else {
+      console.error(chalk.red(`Error: Unknown error`));
+    }
+    process.exit(1);
+  }
 }

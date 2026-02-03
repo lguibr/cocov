@@ -28,7 +28,6 @@ export interface CocovFile {
   [key: string]: unknown;
 }
 
-
 export interface CocovConfig {
   thresholds?: {
     lines?: number;
