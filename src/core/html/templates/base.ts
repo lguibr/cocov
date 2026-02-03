@@ -1,22 +1,5 @@
 
-import fs from 'fs-extra';
-import path from 'path';
-import { HistoryEntry, TotalCoverage } from './types.js';
-
-export class HtmlGenerator {
-  private history: HistoryEntry[];
-  private current: TotalCoverage;
-
-  constructor(history: HistoryEntry[], current: TotalCoverage) {
-    this.history = history;
-    this.current = current;
-  }
-
-  generate(): string {
-    const historyData = JSON.stringify(this.history);
-    const currentData = JSON.stringify(this.current);
-
-    return `
+export const htmlTemplate = (historyData: string, currentData: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,10 +64,6 @@ export class HtmlGenerator {
         const timestamps = history.map(h => new Date(h.timestamp).toLocaleDateString() + ' ' + new Date(h.timestamp).toLocaleTimeString());
         const dataLines = history.map(h => h.metrics.lines.pct);
         
-        // Add current if not in history yet
-        // timestamps.push('Current');
-        // dataLines.push(current.total.lines.pct);
-
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -104,6 +83,4 @@ export class HtmlGenerator {
     </script>
 </body>
 </html>
-    `;
-  }
-}
+`;

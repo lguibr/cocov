@@ -60,4 +60,14 @@ program
     await markdownAction(options);
   });
 
+// Badge Command
+program
+  .command('badge')
+  .description('Generate coverage SVG badge')
+  .option('-o, --output <file>', 'Output file path', 'cocov-badge.svg')
+  .action(async (options) => {
+      const { badgeAction } = await import('./commands/badge.js');
+      await badgeAction(options);
+  });
+
 program.parse();

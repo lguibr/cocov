@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import { HistoryManager } from '../history.js';
 import { readCurrentCoverage } from '../core/coverage/reader.js';
-import { HtmlGenerator } from '../html-generator.js';
+import { HtmlGenerator } from '../core/html/generator.js';
 
 export async function htmlAction() {
     try {

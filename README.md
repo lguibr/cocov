@@ -1,7 +1,12 @@
-
+# Cocov: The Code Coverage Guard
 <div align="center">
-  <img src="assets/logo.png" alt="Cocov Logo" width="200" />
-  <h1>Cocov 🚀</h1>
+  <img src="assets/logo.png" alt="Cocov Logo" width="150" />
+</div>
+
+[![CI Security & Quality](https://github.com/daicer/cocov/actions/workflows/ci.yml/badge.svg)](https://github.com/daicer/cocov/actions/workflows/ci.yml)
+[![NPM Version](https://img.shields.io/npm/v/cocov?style=flat-square)](https://www.npmjs.com/package/cocov)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+Cocov 🚀
   <p><b>Covering your poop.</b></p>
 </div>
 

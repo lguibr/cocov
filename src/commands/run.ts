@@ -1,13 +1,11 @@
 import chalk from 'chalk';
-import { readBaseline, readCurrentCoverage, readDetailedCoverage } from '../core/coverage/reader.js';
-import { writeBaseline } from '../core/coverage/writer.js';
-import { HistoryManager } from '../history.js';
-import { StackGuard } from '../stack-guard.js';
-import { Reporter } from '../reporter.js';
-import { Comparator } from '../comparator.js';
-import { DiffChecker } from '../diff-checker.js';
-import { runTestCommand } from '../executor.js';
-import { getCurrentCommit, getCurrentBranch } from '../git-utils.js';
+import { readBaseline, readCurrentCoverage } from '@/core/coverage/reader.js';
+import { HistoryManager } from '@/history.js';
+import { StackGuard } from '@/stack-guard.js';
+import { runTestCommand } from '@/executor.js';
+import { runDiffCheck } from '@/core/logic/diff-runner.js';
+import { handleBaselineCheck } from '@/core/logic/baseline-handler.js';
+import { verifyCoverageFreshness } from '@/core/integrity.js';
 
 export async function runAction(testCommand: string, options: any) {
     console.log(chalk.blue(`Running test command: ${testCommand}...`));
@@ -17,6 +15,8 @@ export async function runAction(testCommand: string, options: any) {
     }
 
     try {
+        await verifyCoverageFreshness(process.cwd());
+        
         const historyManager = new HistoryManager(process.cwd());
         const cwd = process.cwd();
 
@@ -29,70 +29,13 @@ export async function runAction(testCommand: string, options: any) {
 
         await runTestCommand(testCommand);
 
-        const current = await readCurrentCoverage(cwd, options.file);
-        const reporter = new Reporter();
-        const comparator = new Comparator();
-
         if (options.diff) {
-            console.log(chalk.blue('\n🔍 Running Diff-Aware Strict Mode...'));
-            const diffChecker = new DiffChecker(cwd);
-            const detailed = await readDetailedCoverage(cwd);
-
-            if (!detailed) {
-                console.warn(chalk.yellow('⚠ Could not find detailed coverage (coverage-final.json). Skipping diff check.'));
-            } else {
-                const diffResults = await diffChecker.checkDiffCoverage(detailed);
-                if (diffResults.length > 0) {
-                    console.error(chalk.red('\n🛑 Strict Mode Failed: Uncovered changes detected!'));
-                    diffResults.forEach(r => {
-                        console.error(chalk.red(`  ${r.file}: Lines [${r.uncoveredLines.join(', ')}] are not covered.`));
-                    });
-                    process.exit(1);
-                } else {
-                    console.log(chalk.green('✔ Diff Strict Mode Passed: All changes covered.'));
-                }
-            }
+            await runDiffCheck(cwd);
         }
 
-        if (!options.dryRun) {
-            const context = {
-                cwd: process.cwd(),
-                timestamp: new Date(),
-                commitHash: await getCurrentCommit(),
-                branch: await getCurrentBranch()
-            };
-            await historyManager.append(current.total, context);
-        }
-
-        if (!baseline) {
-            if (options.dryRun) {
-                console.log(chalk.yellow('No baseline found. (Dry Run: Not saving).'));
-                process.exit(0);
-            }
-            console.log(chalk.yellow('No baseline found. Saving current coverage as baseline.'));
-            await writeBaseline(cwd, current);
-            reporter.printTotal(current.total);
-            process.exit(0);
-        }
-
-        const result = comparator.compare(current.total, baseline.total);
-        reporter.printSummary(result);
-
-        if (result.isRegression) {
-            console.error(chalk.red('\n✖ Coverage regression detected!'));
-            process.exit(1);
-        }
-
-        if (result.improved) {
-            if (options.dryRun) {
-                console.log(chalk.green('\n✔ Coverage improved! (Dry Run: Baseline NOT updated).'));
-            } else {
-                console.log(chalk.green('\n✔ Coverage improved! Updating baseline.'));
-                await writeBaseline(cwd, current);
-            }
-        } else {
-            console.log(chalk.gray('\nCoverage unchanged.'));
-        }
+        const current = await readCurrentCoverage(cwd, options.file);
+        
+        await handleBaselineCheck(cwd, current, baseline, options, historyManager);
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(chalk.red(`Error: ${error.message}`));

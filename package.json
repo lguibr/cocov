@@ -13,7 +13,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint 'src/**/*.ts'",
@@ -62,7 +62,9 @@
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "prettier": "^3.8.1",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.3.3",
+    "vite-tsconfig-paths": "^6.0.5",
     "vitest": "^1.1.0"
   }
 }

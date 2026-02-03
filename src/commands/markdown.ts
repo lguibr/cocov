@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
-import { HistoryManager } from '../history.js';
-import { readCurrentCoverage } from '../core/coverage/reader.js';
-import { MarkdownGenerator } from '../markdown-generator.js';
-import { injectIntoFile } from '../injector.js';
+import { HistoryManager } from '@/history.js';
+import { readCurrentCoverage } from '@/core/coverage/reader.js';
+import { MarkdownGenerator } from '@/markdown-generator.js';
+import { injectIntoFile } from '@/injector.js';
 
 export async function markdownAction(options: { inject?: string }) {
     try {
