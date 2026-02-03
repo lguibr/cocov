@@ -44,6 +44,19 @@ index 000..abc
 +export const bar = 1;`,
       expected: { 'new.ts': [1, 2, 3] },
     },
+    {
+      name: 'Deleted file',
+      diff: `diff --git a/deleted.ts b/deleted.ts
+deleted file mode 100644
+index abc..000
+--- a/deleted.ts
++++ /dev/null
+@@ -1,3 +0,0 @@
+-import foo
+-
+-export const bar = 1;`,
+      expected: {},
+    },
   ];
 
   // Permute these with random noises or other files to increase count?

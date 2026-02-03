@@ -52,17 +52,43 @@ export async function badgeAction(options: BadgeCommandOptions): Promise<void> {
     if (type === 'all') {
       const types: Exclude<BadgeType, 'logo' | 'unified'>[] = ['lines', 'statements', 'functions', 'branches'];
       
+      // Standard badges
       for (const t of types) {
         const pct = current.total[t].pct;
         const svg = generateBadgeSvg(pct, t);
-        const fileName = options.output ? options.output.replace('.svg', `-${t}.svg`) : `cocov-badge-${t}.svg`;
+        const fileName = (options.output && options.output !== 'cocov-badge.svg') ? options.output.replace('.svg', `-${t}.svg`) : `cocov-badge-${t}.svg`;
         await fs.outputFile(fileName, svg);
         console.log(chalk.green(`✔ Badge generated: ${fileName}`));
       }
+
+      // Unified badge
+      const unifiedSvg = generateBadgeSvg(current.total, 'unified');
+      const unifiedName = (options.output && options.output !== 'cocov-badge.svg') ? options.output.replace('.svg', '-unified.svg') : 'cocov-badge-unified.svg';
+      await fs.outputFile(unifiedName, unifiedSvg);
+      console.log(chalk.green(`✔ Badge generated: ${unifiedName}`));
+
+      // Diff badges
+      const baseline = await readBaseline(process.cwd());
+      if (baseline && baseline.total) {
+        for (const t of types) {
+           const metric = t as keyof CoverageSummary;
+           const currentPct = current.total[metric].pct;
+           const baselinePct = baseline.total[metric].pct;
+           const diff = currentPct - baselinePct;
+           
+           const svg = generateDiffBadge(diff, t as BadgeType, { label: `Δ ${t}` });
+           const fileName = (options.output && options.output !== 'cocov-badge.svg') ? options.output.replace('.svg', `-diff-${t}.svg`) : `cocov-badge-diff-${t}.svg`;
+           await fs.outputFile(fileName, svg);
+           console.log(chalk.green(`✔ Badge generated: ${fileName}`));
+        }
+      }
+
       return;
     }
 
     let pct = 0;
+    let finalType = type;
+
     if (type === 'logo') {
       pct = 0; // Irrelevant for logo
     } else if (validMetrics.includes(type)) {
@@ -70,9 +96,10 @@ export async function badgeAction(options: BadgeCommandOptions): Promise<void> {
     } else {
        console.warn(chalk.yellow(`Unknown badge type '${type}', defaulting to lines`));
        pct = current.total.lines.pct;
+       finalType = 'lines';
     }
 
-    const svg = generateBadgeSvg(pct, type as BadgeType);
+    const svg = generateBadgeSvg(pct, finalType as BadgeType);
     const outputPath = options.output || `cocov-badge-${type}.svg`;
 
     await fs.outputFile(outputPath, svg);

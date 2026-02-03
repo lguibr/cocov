@@ -81,8 +81,14 @@ export async function setupGithub(cwd: string, answers: InitAnswers): Promise<vo
   if (!answers.setupGithubAction) return;
 
   const githubDir = path.join(cwd, '.github', 'workflows');
-  await fs.ensureDir(githubDir);
   const workflowPath = path.join(githubDir, 'cocov.yml');
+
+  if (await fs.pathExists(workflowPath)) {
+    console.log(chalk.gray('GitHub Action already exists. Skipping.'));
+    return;
+  }
+
+  await fs.ensureDir(githubDir);
 
   const workflow = `name: Cocov CI
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { scaffoldConfig, setupHusky, setupGithub } from './scaffold.js';
+import { scaffoldConfig, setupHusky, setupGithub, updateGitIgnore } from './scaffold.js';
 import fs from 'fs-extra';
 import { execa } from 'execa';
 import path from 'path';
@@ -61,5 +61,48 @@ describe('setupGithub', () => {
       expect.stringContaining('cocov.yml'),
       expect.stringContaining('name: Cocov CI'),
     );
+  });
+});
+
+describe('updateGitIgnore', () => {
+  it('skips if not selected', async () => {
+    vi.clearAllMocks();
+    await updateGitIgnore('/cwd', { updateGitIgnore: false });
+    expect(fs.writeFile).not.toHaveBeenCalled();
+    expect(fs.appendFile).not.toHaveBeenCalled();
+  });
+
+  it('creates .gitignore if missing', async () => {
+    vi.mocked(fs.pathExists as any).mockResolvedValue(false); // eslint-disable-line @typescript-eslint/no-explicit-any
+    await updateGitIgnore('/cwd', { updateGitIgnore: true });
+    expect(fs.writeFile).toHaveBeenCalledWith(
+      expect.stringContaining('.gitignore'),
+      expect.stringContaining('.cocov')
+    );
+  });
+
+  it('appends to .gitignore if exists but missing entry', async () => {
+    vi.mocked(fs.pathExists as any).mockResolvedValue(true); // eslint-disable-line @typescript-eslint/no-explicit-any
+    vi.mocked(fs.readFile).mockResolvedValue('node_modules\n');
+    await updateGitIgnore('/cwd', { updateGitIgnore: true });
+    expect(fs.appendFile).toHaveBeenCalledWith(
+      expect.stringContaining('.gitignore'),
+      expect.stringContaining('.cocov')
+    );
+  });
+
+  it('skips appending if entry already exists', async () => {
+    vi.mocked(fs.pathExists as any).mockResolvedValue(true); // eslint-disable-line @typescript-eslint/no-explicit-any
+    vi.mocked(fs.readFile).mockResolvedValue('node_modules\n.cocov\n');
+    await updateGitIgnore('/cwd', { updateGitIgnore: true });
+    expect(fs.appendFile).not.toHaveBeenCalled();
+  });
+});
+
+describe('setupGithub idempotency', () => {
+   it('skips if workflow already exists', async () => {
+    vi.mocked(fs.pathExists as any).mockResolvedValue(true); // eslint-disable-line @typescript-eslint/no-explicit-any
+    await setupGithub('/cwd', { setupGithubAction: true });
+    expect(fs.writeFile).not.toHaveBeenCalled();
   });
 });
