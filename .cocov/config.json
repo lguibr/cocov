@@ -1,28 +1,28 @@
 {
   "total": {
     "lines": {
-      "total": 2453,
-      "covered": 2453,
+      "total": 3333,
+      "covered": 3141,
       "skipped": 0,
-      "pct": 100
+      "pct": 94.23
     },
     "statements": {
-      "total": 2453,
-      "covered": 2453,
+      "total": 3333,
+      "covered": 3141,
       "skipped": 0,
-      "pct": 100
+      "pct": 94.23
     },
     "functions": {
-      "total": 62,
-      "covered": 62,
+      "total": 91,
+      "covered": 87,
       "skipped": 0,
-      "pct": 100
+      "pct": 95.6
     },
     "branches": {
-      "total": 337,
-      "covered": 337,
+      "total": 451,
+      "covered": 427,
       "skipped": 0,
-      "pct": 100
+      "pct": 94.67
     },
     "branchesTrue": {
       "total": 0,
@@ -33,10 +33,10 @@
   },
   "/Users/lg/lab/cocov/src/cli.ts": {
     "lines": {
-      "total": 90,
-      "covered": 90,
+      "total": 126,
+      "covered": 120,
       "skipped": 0,
-      "pct": 100
+      "pct": 95.23
     },
     "functions": {
       "total": 1,
@@ -45,16 +45,16 @@
       "pct": 100
     },
     "statements": {
-      "total": 90,
-      "covered": 90,
+      "total": 126,
+      "covered": 120,
       "skipped": 0,
-      "pct": 100
+      "pct": 95.23
     },
     "branches": {
-      "total": 11,
+      "total": 12,
       "covered": 11,
       "skipped": 0,
-      "pct": 100
+      "pct": 91.66
     }
   },
   "/Users/lg/lab/cocov/src/comparator.ts": {
@@ -83,10 +83,36 @@
       "pct": 100
     }
   },
+  "/Users/lg/lab/cocov/src/config-loader.ts": {
+    "lines": {
+      "total": 31,
+      "covered": 3,
+      "skipped": 0,
+      "pct": 9.67
+    },
+    "functions": {
+      "total": 1,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 0
+    },
+    "statements": {
+      "total": 31,
+      "covered": 3,
+      "skipped": 0,
+      "pct": 9.67
+    },
+    "branches": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
   "/Users/lg/lab/cocov/src/diff-checker.ts": {
     "lines": {
-      "total": 68,
-      "covered": 68,
+      "total": 108,
+      "covered": 108,
       "skipped": 0,
       "pct": 100
     },
@@ -97,16 +123,16 @@
       "pct": 100
     },
     "statements": {
-      "total": 68,
-      "covered": 68,
+      "total": 108,
+      "covered": 108,
       "skipped": 0,
       "pct": 100
     },
     "branches": {
-      "total": 14,
-      "covered": 14,
+      "total": 12,
+      "covered": 11,
       "skipped": 0,
-      "pct": 100
+      "pct": 91.66
     }
   },
   "/Users/lg/lab/cocov/src/executor.ts": {
@@ -137,34 +163,34 @@
   },
   "/Users/lg/lab/cocov/src/git-utils.ts": {
     "lines": {
-      "total": 91,
-      "covered": 91,
+      "total": 109,
+      "covered": 107,
       "skipped": 0,
-      "pct": 100
+      "pct": 98.16
     },
     "functions": {
-      "total": 5,
-      "covered": 5,
+      "total": 6,
+      "covered": 6,
       "skipped": 0,
       "pct": 100
     },
     "statements": {
-      "total": 91,
-      "covered": 91,
+      "total": 109,
+      "covered": 107,
       "skipped": 0,
-      "pct": 100
+      "pct": 98.16
     },
     "branches": {
-      "total": 13,
-      "covered": 13,
+      "total": 16,
+      "covered": 15,
       "skipped": 0,
-      "pct": 100
+      "pct": 93.75
     }
   },
   "/Users/lg/lab/cocov/src/history.ts": {
     "lines": {
-      "total": 56,
-      "covered": 56,
+      "total": 64,
+      "covered": 64,
       "skipped": 0,
       "pct": 100
     },
@@ -175,16 +201,16 @@
       "pct": 100
     },
     "statements": {
-      "total": 56,
-      "covered": 56,
+      "total": 64,
+      "covered": 64,
       "skipped": 0,
       "pct": 100
     },
     "branches": {
       "total": 10,
-      "covered": 10,
+      "covered": 9,
       "skipped": 0,
-      "pct": 100
+      "pct": 90
     }
   },
   "/Users/lg/lab/cocov/src/injector.ts": {
@@ -317,6 +343,32 @@
       "pct": 100
     }
   },
+  "/Users/lg/lab/cocov/src/commands/comment.ts": {
+    "lines": {
+      "total": 89,
+      "covered": 77,
+      "skipped": 0,
+      "pct": 86.51
+    },
+    "functions": {
+      "total": 3,
+      "covered": 3,
+      "skipped": 0,
+      "pct": 100
+    },
+    "statements": {
+      "total": 89,
+      "covered": 77,
+      "skipped": 0,
+      "pct": 86.51
+    },
+    "branches": {
+      "total": 16,
+      "covered": 14,
+      "skipped": 0,
+      "pct": 87.5
+    }
+  },
   "/Users/lg/lab/cocov/src/commands/html.ts": {
     "lines": {
       "total": 11,
@@ -369,6 +421,32 @@
       "pct": 100
     }
   },
+  "/Users/lg/lab/cocov/src/commands/inject-readme.ts": {
+    "lines": {
+      "total": 153,
+      "covered": 139,
+      "skipped": 0,
+      "pct": 90.84
+    },
+    "functions": {
+      "total": 5,
+      "covered": 4,
+      "skipped": 0,
+      "pct": 80
+    },
+    "statements": {
+      "total": 153,
+      "covered": 139,
+      "skipped": 0,
+      "pct": 90.84
+    },
+    "branches": {
+      "total": 24,
+      "covered": 22,
+      "skipped": 0,
+      "pct": 91.66
+    }
+  },
   "/Users/lg/lab/cocov/src/commands/markdown.ts": {
     "lines": {
       "total": 55,
@@ -395,36 +473,10 @@
       "pct": 100
     }
   },
-  "/Users/lg/lab/cocov/src/commands/run.ts": {
+  "/Users/lg/lab/cocov/src/commands/prune.ts": {
     "lines": {
-      "total": 73,
-      "covered": 73,
-      "skipped": 0,
-      "pct": 100
-    },
-    "functions": {
-      "total": 1,
-      "covered": 1,
-      "skipped": 0,
-      "pct": 100
-    },
-    "statements": {
-      "total": 73,
-      "covered": 73,
-      "skipped": 0,
-      "pct": 100
-    },
-    "branches": {
-      "total": 16,
-      "covered": 16,
-      "skipped": 0,
-      "pct": 100
-    }
-  },
-  "/Users/lg/lab/cocov/src/core/integrity.ts": {
-    "lines": {
-      "total": 42,
-      "covered": 42,
+      "total": 67,
+      "covered": 67,
       "skipped": 0,
       "pct": 100
     },
@@ -435,10 +487,88 @@
       "pct": 100
     },
     "statements": {
-      "total": 42,
-      "covered": 42,
+      "total": 67,
+      "covered": 67,
       "skipped": 0,
       "pct": 100
+    },
+    "branches": {
+      "total": 17,
+      "covered": 17,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "/Users/lg/lab/cocov/src/commands/run.ts": {
+    "lines": {
+      "total": 102,
+      "covered": 100,
+      "skipped": 0,
+      "pct": 98.03
+    },
+    "functions": {
+      "total": 1,
+      "covered": 1,
+      "skipped": 0,
+      "pct": 100
+    },
+    "statements": {
+      "total": 102,
+      "covered": 100,
+      "skipped": 0,
+      "pct": 98.03
+    },
+    "branches": {
+      "total": 19,
+      "covered": 18,
+      "skipped": 0,
+      "pct": 94.73
+    }
+  },
+  "/Users/lg/lab/cocov/src/core/container.ts": {
+    "lines": {
+      "total": 43,
+      "covered": 43,
+      "skipped": 0,
+      "pct": 100
+    },
+    "functions": {
+      "total": 6,
+      "covered": 6,
+      "skipped": 0,
+      "pct": 100
+    },
+    "statements": {
+      "total": 43,
+      "covered": 43,
+      "skipped": 0,
+      "pct": 100
+    },
+    "branches": {
+      "total": 8,
+      "covered": 8,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "/Users/lg/lab/cocov/src/core/integrity.ts": {
+    "lines": {
+      "total": 59,
+      "covered": 49,
+      "skipped": 0,
+      "pct": 83.05
+    },
+    "functions": {
+      "total": 3,
+      "covered": 2,
+      "skipped": 0,
+      "pct": 66.66
+    },
+    "statements": {
+      "total": 59,
+      "covered": 49,
+      "skipped": 0,
+      "pct": 83.05
     },
     "branches": {
       "total": 5,
@@ -475,28 +605,28 @@
   },
   "/Users/lg/lab/cocov/src/core/coverage/reader.ts": {
     "lines": {
-      "total": 59,
-      "covered": 59,
+      "total": 196,
+      "covered": 87,
       "skipped": 0,
-      "pct": 100
+      "pct": 44.38
     },
     "functions": {
-      "total": 3,
-      "covered": 3,
+      "total": 5,
+      "covered": 4,
       "skipped": 0,
-      "pct": 100
+      "pct": 80
     },
     "statements": {
-      "total": 59,
-      "covered": 59,
+      "total": 196,
+      "covered": 87,
       "skipped": 0,
-      "pct": 100
+      "pct": 44.38
     },
     "branches": {
-      "total": 8,
-      "covered": 8,
+      "total": 20,
+      "covered": 12,
       "skipped": 0,
-      "pct": 100
+      "pct": 60
     }
   },
   "/Users/lg/lab/cocov/src/core/coverage/writer.ts": {
@@ -547,6 +677,32 @@
     "branches": {
       "total": 3,
       "covered": 3,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "/Users/lg/lab/cocov/src/core/html/runner.ts": {
+    "lines": {
+      "total": 27,
+      "covered": 27,
+      "skipped": 0,
+      "pct": 100
+    },
+    "functions": {
+      "total": 1,
+      "covered": 1,
+      "skipped": 0,
+      "pct": 100
+    },
+    "statements": {
+      "total": 27,
+      "covered": 27,
+      "skipped": 0,
+      "pct": 100
+    },
+    "branches": {
+      "total": 2,
+      "covered": 2,
       "skipped": 0,
       "pct": 100
     }
@@ -681,106 +837,54 @@
       "pct": 100
     }
   },
-  "/Users/lg/lab/cocov/src/tools/generate-todo.mjs": {
+  "/Users/lg/lab/cocov/src/core/logic/smart-diff.ts": {
     "lines": {
-      "total": 79,
-      "covered": 0,
+      "total": 126,
+      "covered": 121,
       "skipped": 0,
-      "pct": 0
+      "pct": 96.03
     },
     "functions": {
-      "total": 1,
-      "covered": 0,
+      "total": 4,
+      "covered": 4,
       "skipped": 0,
-      "pct": 0
+      "pct": 100
     },
     "statements": {
-      "total": 79,
-      "covered": 0,
+      "total": 126,
+      "covered": 121,
       "skipped": 0,
-      "pct": 0
+      "pct": 96.03
     },
     "branches": {
-      "total": 1,
-      "covered": 0,
+      "total": 16,
+      "covered": 13,
       "skipped": 0,
-      "pct": 0
+      "pct": 81.25
     }
   },
-  "/Users/lg/lab/cocov/src/tools/generate-todo.ts": {
+  "/Users/lg/lab/cocov/src/core/logic/threshold-gate.ts": {
     "lines": {
-      "total": 62,
-      "covered": 0,
-      "skipped": 0,
-      "pct": 0
-    },
-    "functions": {
-      "total": 1,
-      "covered": 0,
-      "skipped": 0,
-      "pct": 0
-    },
-    "statements": {
-      "total": 62,
-      "covered": 0,
-      "skipped": 0,
-      "pct": 0
-    },
-    "branches": {
-      "total": 1,
-      "covered": 0,
-      "skipped": 0,
-      "pct": 0
-    }
-  },
-  "/Users/lg/lab/cocov/src/utils/banner.ts": {
-    "lines": {
-      "total": 47,
-      "covered": 47,
+      "total": 22,
+      "covered": 22,
       "skipped": 0,
       "pct": 100
     },
     "functions": {
-      "total": 1,
-      "covered": 1,
+      "total": 2,
+      "covered": 2,
       "skipped": 0,
       "pct": 100
     },
     "statements": {
-      "total": 47,
-      "covered": 47,
+      "total": 22,
+      "covered": 22,
       "skipped": 0,
       "pct": 100
     },
     "branches": {
-      "total": 5,
-      "covered": 5,
-      "skipped": 0,
-      "pct": 100
-    }
-  },
-  "/Users/lg/lab/cocov/src/commands/inject-readme.ts": {
-    "lines": {
-      "total": 103,
-      "covered": 103,
-      "skipped": 0,
-      "pct": 100
-    },
-    "functions": {
-      "total": 1,
-      "covered": 1,
-      "skipped": 0,
-      "pct": 100
-    },
-    "statements": {
-      "total": 103,
-      "covered": 103,
-      "skipped": 0,
-      "pct": 100
-    },
-    "branches": {
-      "total": 15,
-      "covered": 15,
+      "total": 7,
+      "covered": 7,
       "skipped": 0,
       "pct": 100
     }
@@ -811,36 +915,36 @@
       "pct": 100
     }
   },
-  "/Users/lg/lab/cocov/src/core/logic/threshold-gate.ts": {
+  "/Users/lg/lab/cocov/src/core/parsers/lcov.ts": {
     "lines": {
-      "total": 22,
-      "covered": 22,
+      "total": 189,
+      "covered": 185,
       "skipped": 0,
-      "pct": 100
+      "pct": 97.88
     },
     "functions": {
-      "total": 2,
-      "covered": 2,
+      "total": 5,
+      "covered": 5,
       "skipped": 0,
       "pct": 100
     },
     "statements": {
-      "total": 22,
-      "covered": 22,
+      "total": 189,
+      "covered": 185,
       "skipped": 0,
-      "pct": 100
+      "pct": 97.88
     },
     "branches": {
-      "total": 7,
-      "covered": 7,
+      "total": 31,
+      "covered": 27,
       "skipped": 0,
-      "pct": 100
+      "pct": 87.09
     }
   },
-  "/Users/lg/lab/cocov/src/core/html/runner.ts": {
+  "/Users/lg/lab/cocov/src/utils/banner.ts": {
     "lines": {
-      "total": 27,
-      "covered": 27,
+      "total": 47,
+      "covered": 47,
       "skipped": 0,
       "pct": 100
     },
@@ -851,14 +955,14 @@
       "pct": 100
     },
     "statements": {
-      "total": 27,
-      "covered": 27,
+      "total": 47,
+      "covered": 47,
       "skipped": 0,
       "pct": 100
     },
     "branches": {
-      "total": 2,
-      "covered": 2,
+      "total": 5,
+      "covered": 5,
       "skipped": 0,
       "pct": 100
     }
