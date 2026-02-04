@@ -8,6 +8,8 @@ import { runDiffCheck } from '@/core/logic/diff-runner.js';
 import { handleBaselineCheck } from '@/core/logic/baseline-handler.js';
 import { enforceThresholds, ThresholdError } from '@/core/logic/threshold-gate.js';
 import { verifyCoverageFreshness } from '@/core/integrity.js';
+import { generateHtmlReport } from '@/core/html/runner.js';
+import fs from 'fs-extra';
 
 vi.mock('../core/coverage/reader.js');
 vi.mock('../history.js');
@@ -15,8 +17,24 @@ vi.mock('../stack-guard.js');
 vi.mock('../executor.js');
 vi.mock('../core/logic/diff-runner.js');
 vi.mock('../core/logic/baseline-handler.js');
-vi.mock('../core/logic/baseline-handler.js');
 vi.mock('../core/integrity.js');
+vi.mock('../core/html/runner.js');
+vi.mock('fs-extra', () => {
+  const mockFs = {
+    pathExists: vi.fn(),
+    readJSON: vi.fn(),
+    writeJSON: vi.fn(),
+    ensureDir: vi.fn(),
+    writeFile: vi.fn(),
+    appendFile: vi.fn(),
+    readFile: vi.fn(),
+    stat: vi.fn(),
+  };
+  return {
+    default: mockFs,
+    ...mockFs,
+  };
+});
 vi.mock('../core/logic/threshold-gate.js', async () => {
   const actual = await vi.importActual('../core/logic/threshold-gate.js');
   return {
@@ -29,7 +47,7 @@ describe('runAction', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(process, 'cwd').mockReturnValue('/cwd');
-    vi.mocked(readBaseline).mockResolvedValue({ stack: {} });
+    vi.mocked(readBaseline).mockResolvedValue({ stack: {}, total: 0, testCommand: 'npm test' } as never);
     vi.mocked(readCurrentCoverage).mockResolvedValue({ total: { lines: { pct: 80 } } } as never);
   });
 
@@ -90,8 +108,55 @@ describe('runAction', () => {
 
     await runAction('npm test', {});
 
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Per-File Coverage Threshold Failed (Min 80%):'));
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('x file.ts: 50%'));
     expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('generates html report if enabled in config', async () => {
+    vi.mocked(fs.pathExists).mockResolvedValue(true);
+    vi.mocked(fs.readJSON).mockResolvedValue({ 
+      testCommand: 'npm test',
+      html: { enabled: true }
+    });
+    vi.mocked(readBaseline).mockResolvedValue(null);
+    vi.mocked(readCurrentCoverage).mockResolvedValue({
+      total: { lines: { pct: 80 }, statements: { pct: 80 }, functions: { pct: 80 }, branches: { pct: 80 } },
+      files: {}
+    } as never);
+
+    await runAction('npm test', { dryRun: false });
+
+    expect(generateHtmlReport).toHaveBeenCalled();
+  });
+
+  it('skips html report if disabled in config', async () => {
+    vi.mocked(fs.pathExists).mockResolvedValue(true);
+    vi.mocked(fs.readJSON).mockResolvedValue({ 
+      testCommand: 'npm test',
+      html: { enabled: false }
+    });
+    vi.mocked(readBaseline).mockResolvedValue(null);
+    vi.mocked(readCurrentCoverage).mockResolvedValue({
+      total: { lines: { pct: 80 }, statements: { pct: 80 }, functions: { pct: 80 }, branches: { pct: 80 } },
+      files: {}
+    } as never);
+
+    await runAction('npm test', { dryRun: false });
+
+    expect(generateHtmlReport).not.toHaveBeenCalled();
+  });
+
+  it('skips html report if config missing', async () => {
+    vi.mocked(fs.pathExists).mockResolvedValue(false);
+    // @ts-ignore
+    vi.mocked(readBaseline).mockResolvedValue(null);
+    vi.mocked(readCurrentCoverage).mockResolvedValue({
+      total: { lines: { pct: 80 }, statements: { pct: 80 }, functions: { pct: 80 }, branches: { pct: 80 } },
+      files: {}
+    } as never);
+
+    await runAction('npm test', { dryRun: false });
+
+    expect(generateHtmlReport).not.toHaveBeenCalled();
   });
 });

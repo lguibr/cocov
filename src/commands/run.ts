@@ -7,6 +7,9 @@ import { runDiffCheck } from '../core/logic/diff-runner.js';
 import { handleBaselineCheck } from '../core/logic/baseline-handler.js';
 import { verifyCoverageFreshness } from '../core/integrity.js';
 import { enforceThresholds, ThresholdError } from '../core/logic/threshold-gate.js';
+import { generateHtmlReport } from '../core/html/runner.js';
+import fs from 'fs-extra';
+import path from 'path';
 
 interface RunOptions {
   dryRun?: boolean;
@@ -46,6 +49,14 @@ export async function runAction(testCommand: string, options: RunOptions): Promi
     // Use configured threshold or default to 0 (disabled)
     enforceThresholds(current, baseline);
 
+    // Generate HTML report if enabled
+    const configPath = path.join(cwd, 'cocov.json');
+    if (await fs.pathExists(configPath)) {
+      const config = await fs.readJSON(configPath);
+      if (config.html?.enabled) {
+        await generateHtmlReport(cwd);
+      }
+    }
 
     await handleBaselineCheck(cwd, current, baseline, options, historyManager);
   } catch (error: unknown) {

@@ -8,9 +8,18 @@ export interface InitAnswers {
   hooks?: string[];
   setupGithubAction?: boolean;
   updateGitIgnore?: boolean;
+  testCommand?: string;
+  runner?: 'vitest' | 'jest' | 'other';
+  configureCoverage?: boolean;
+  generateHtml?: boolean;
 }
 
-export async function askInitQuestions(configExists: boolean): Promise<InitAnswers> {
+export interface InitDefaults {
+  testCommand: string;
+  runner: 'vitest' | 'jest' | 'other';
+}
+
+export async function askInitQuestions(configExists: boolean, defaults: InitDefaults): Promise<InitAnswers> {
   console.log('DEBUG: askInitQuestions executing');
   if (configExists) {
     const { overwrite } = await prompts({
@@ -23,6 +32,35 @@ export async function askInitQuestions(configExists: boolean): Promise<InitAnswe
   }
 
   return prompts([
+    {
+      type: 'text',
+      name: 'testCommand',
+      message: 'Test Command (to run tests):',
+      initial: defaults.testCommand,
+    },
+    {
+      type: 'select',
+      name: 'runner',
+      message: 'Test Runner:',
+      choices: [
+        { title: 'Vitest', value: 'vitest' },
+        { title: 'Jest', value: 'jest' },
+        { title: 'Other', value: 'other' },
+      ],
+      initial: defaults.runner === 'vitest' ? 0 : defaults.runner === 'jest' ? 1 : 2,
+    },
+    {
+      type: (prev) => (['vitest', 'jest'].includes(prev) ? 'confirm' : null),
+      name: 'configureCoverage',
+      message: 'Configure coverage reporting (json-summary)?',
+      initial: true,
+    },
+    {
+      type: 'confirm',
+      name: 'generateHtml',
+      message: 'Generate HTML report on run?',
+      initial: true,
+    },
     {
       type: 'confirm',
       name: 'enableStackGuard',

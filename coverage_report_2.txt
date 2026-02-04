@@ -1,0 +1,774 @@
+
+> cocov@3.3.6 test:coverage
+> vitest run --coverage
+
+
+ RUN  v1.6.1 /Users/lg/lab/cocov
+      Coverage enabled with v8
+
+ ✓ src/core/badges/generator.test.ts  (14 tests) 3ms
+ ✓ src/markdown-generator.test.ts  (6 tests) 2ms
+ ✓ src/git-utils.test.ts  (8 tests) 6ms
+stdout | src/commands/badge.test.ts > badgeAction > generates lines badge by default
+✔ Badge generated: cocov-badge-lines.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > generates specific badge type
+✔ Badge generated: cocov-badge-branches.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > generates unified badge
+✔ Unified Badge generated: cocov-badge-unified.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > generates diff badge
+✔ Diff Badge generated: cocov-badge-diff-lines.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > generates diff badge with no baseline (warns)
+✔ Diff Badge generated: cocov-badge-diff-lines.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > generates all badges
+✔ Badge generated: cocov-badge-lines.svg
+✔ Badge generated: cocov-badge-statements.svg
+✔ Badge generated: cocov-badge-functions.svg
+✔ Badge generated: cocov-badge-branches.svg
+✔ Badge generated: cocov-badge-unified.svg
+✔ Badge generated: cocov-badge-diff-lines.svg
+✔ Badge generated: cocov-badge-diff-statements.svg
+✔ Badge generated: cocov-badge-diff-functions.svg
+✔ Badge generated: cocov-badge-diff-branches.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > handles output option for single badge
+✔ Badge generated: custom.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > handles output option for unified badge
+✔ Unified Badge generated: custom-u.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > handles output option for all badges (prefix)
+✔ Badge generated: custom-lines.svg
+✔ Badge generated: custom-statements.svg
+✔ Badge generated: custom-functions.svg
+✔ Badge generated: custom-branches.svg
+✔ Badge generated: custom-unified.svg
+✔ Badge generated: custom-diff-lines.svg
+✔ Badge generated: custom-diff-statements.svg
+✔ Badge generated: custom-diff-functions.svg
+✔ Badge generated: custom-diff-branches.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > generates logo badge
+✔ Badge generated: cocov-badge-logo.svg
+
+stdout | src/commands/badge.test.ts > badgeAction > defaults to lines for unknown type
+✔ Badge generated: cocov-badge-unknown.svg
+
+ ✓ src/commands/badge.test.ts  (12 tests) 11ms
+stdout | src/core/init/scaffold.test.ts > scaffoldConfig > creates .cocov/config.json
+
+✔ Created /cwd/.cocov/config.json
+
+stdout | src/core/init/scaffold.test.ts > scaffoldConfig > creates .cocov/config.json without stack if disabled
+
+✔ Created /cwd/.cocov/config.json
+
+stdout | src/core/init/scaffold.test.ts > scaffoldConfig > appends coverage flags for vitest
+
+✔ Created /cwd/.cocov/config.json
+
+stdout | src/core/init/scaffold.test.ts > scaffoldConfig > appends coverage flags for jest
+
+✔ Created /cwd/.cocov/config.json
+
+stdout | src/core/init/scaffold.test.ts > scaffoldConfig > uses default stack config when enabled but no deps provided
+
+✔ Created /cwd/.cocov/config.json
+
+stdout | src/core/init/scaffold.test.ts > setupHusky > installs and inits husky
+Installing Husky...
+✔ Created hardened pre-commit hook
+
+stdout | src/core/init/scaffold.test.ts > setupHusky > configures pre-push hook
+Installing Husky...
+✔ Created hardened pre-push hook
+
+stdout | src/core/init/scaffold.test.ts > setupHusky > handles errors gracefully
+Installing Husky...
+
+stdout | src/core/init/scaffold.test.ts > setupHusky > handles non-Error exceptions
+Installing Husky...
+
+stdout | src/core/init/scaffold.test.ts > setupHusky > skips unknown hooks
+Installing Husky...
+
+stdout | src/core/init/scaffold.test.ts > setupHusky > appends to hook if it exists but missing cocov
+Installing Husky...
+✔ Injected Cocov Guard into pre-commit
+
+stdout | src/core/init/scaffold.test.ts > setupGithub > creates workflow file
+
+✔ Created GitHub Action at /cwd/.github/workflows/cocov.yml
+
+stdout | src/core/init/scaffold.test.ts > updateGitIgnore > creates .gitignore if missing
+✔ Created .gitignore with .cocov
+
+stdout | src/core/init/scaffold.test.ts > updateGitIgnore > appends to .gitignore if exists but missing entry
+✔ Added .cocov to .gitignore
+
+stdout | src/core/init/scaffold.test.ts > updateGitIgnore > skips appending if entry already exists
+ℹ .cocov already in .gitignore
+
+stdout | src/core/init/scaffold.test.ts > setupGithub idempotency > skips if workflow already exists
+GitHub Action already exists. Skipping.
+
+stdout | src/cli.test.ts > cli > creates program with correct name and version
+     .....:--:.....     
+   .:.:::------:::.:.   
+ .:-:::---------.::.-:. 
+.-==:.::..::::..:..:==-.
+.:-=+*+::::::::::+*++=:.
+    ...:   ..  ::...    
+        ...:....        
+        .-----:.        
+      .....::----:      
+     ..::---------.     
+   ..........:------.   
+    ....::---------..   
+
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+stdout | src/cli.test.ts > cli > triggers init command
+     .....:--:.....     
+   .:.:::------:::.:.   
+ .:-:::---------.::.-:. 
+.-==:.::..::::..:..:==-.
+.:-=+*+::::::::::+*++=:.
+    ...:   ..  ::...    
+        ...:....        
+        .-----:.        
+      .....::----:      
+     ..::---------.     
+   ..........:------.   
+    ....::---------..   
+
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+stdout | src/cli.test.ts > cli > triggers run command
+     .....:--:.....     
+   .:.:::------:::.:.   
+ .:-:::---------.::.-:. 
+.-==:.::..::::..:..:==-.
+.:-=+*+::::::::::+*++=:.
+    ...:   ..  ::...    
+        ...:....        
+        .-----:.        
+      .....::----:      
+     ..::---------.     
+   ..........:------.   
+    ....::---------..   
+
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+stdout | src/cli.test.ts > cli > triggers html command
+     .....:--:.....     
+   .:.:::------:::.:.   
+ .:-:::---------.::.-:. 
+.-==:.::..::::..:..:==-.
+.:-=+*+::::::::::+*++=:.
+    ...:   ..  ::...    
+        ...:....        
+        .-----:.        
+      .....::----:      
+     ..::---------.     
+   ..........:------.   
+    ....::---------..   
+
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+stdout | src/cli.test.ts > cli > triggers badge command
+     .....:--:.....     
+   .:.:::------:::.:.   
+ .:-:::---------.::.-:. 
+.-==:.::..::::..:..:==-.
+.:-=+*+::::::::::+*++=:.
+    ...:   ..  ::...    
+        ...:....        
+        .-----:.        
+      .....::----:      
+     ..::---------.     
+   ..........:------.   
+    ....::---------..   
+
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+ ✓ src/core/init/scaffold.test.ts  (21 tests) 19ms
+stdout | src/cli.test.ts > cli > triggers inject-readme command
+     .....:--:.....     
+   .:.:::------:::.:.   
+ .:-:::---------.::.-:. 
+.-==:.::..::::..:..:==-.
+.:-=+*+::::::::::+*++=:.
+    ...:   ..  ::...    
+        ...:....        
+        .-----:.        
+      .....::----:      
+     ..::---------.     
+   ..........:------.   
+    ....::---------..   
+
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+ ✓ src/core/coverage/io.test.ts  (10 tests) 21ms
+stdout | src/cli.test.ts > cli > handles init failure
+     .....:--:.....     
+   .:.:::------:::.:.   
+ .:-:::---------.::.-:. 
+.-==:.::..::::..:..:==-.
+.:-=+*+::::::::::+*++=:.
+    ...:   ..  ::...    
+        ...:....        
+        .-----:.        
+      .....::----:      
+     ..::---------.     
+   ..........:------.   
+    ....::---------..   
+
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+stdout | src/cli.test.ts > cli > handles unknown init errors
+     .....:--:.....     
+   .:.:::------:::.:.   
+ .:-:::---------.::.-:. 
+.-==:.::..::::..:..:==-.
+.:-=+*+::::::::::+*++=:.
+    ...:   ..  ::...    
+        ...:....        
+        .-----:.        
+      .....::----:      
+     ..::---------.     
+   ..........:------.   
+    ....::---------..   
+
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+ ✓ src/cli.test.ts  (8 tests) 24ms
+stdout | src/commands/init.test.ts > runInit > runs full init workflow
+
+                      --::=-                       
+                 ::-==:::::-==::                   
+               :::===::::::::===:::                
+             :::-===:::::::::-===:::               
+             .......=========-......:              
+                  .:=   ==  ==:                    
+                      .::===                       
+                     ::::::--                      
+                  ----:::::::::                    
+                 ===========-::::                  
+                =======-:::::::::                  
+                  =: :::::::::::                   
+  
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+      ✨ Cocov Configuration Complete! ✨
+  
+
+  Next Steps:
+  
+  1. Review your configuration:
+     cat .cocov/config.json
+
+  2. Run your first coverage check:
+     npx cocov run
+
+  3. (Optional) Visualize your coverage history:
+     npx cocov history
+
+  For more documentation, visit:
+  https://github.com/lguibr/cocov
+  
+
+       _..._
+     .'     '.
+    /  _   _  \
+    | (o)_(o) |
+    |   (_)   |   Protection Active!
+    /    _    \
+   /    | |    \
+  (____/   \____)
+  
+
+stdout | src/commands/init.test.ts > runInit > detects defaults when package.json missing
+
+                      --::=-                       
+                 ::-==:::::-==::                   
+               :::===::::::::===:::                
+             :::-===:::::::::-===:::               
+             .......=========-......:              
+                  .:=   ==  ==:                    
+                      .::===                       
+                     ::::::--                      
+                  ----:::::::::                    
+                 ===========-::::                  
+                =======-:::::::::                  
+                  =: :::::::::::                   
+  
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+      ✨ Cocov Configuration Complete! ✨
+  
+
+  Next Steps:
+  
+  1. Review your configuration:
+     cat .cocov/config.json
+
+  2. Run your first coverage check:
+     npx cocov run
+
+  3. (Optional) Visualize your coverage history:
+     npx cocov history
+
+  For more documentation, visit:
+  https://github.com/lguibr/cocov
+  
+
+       _..._
+     .'     '.
+    /  _   _  \
+    | (o)_(o) |
+    |   (_)   |   Protection Active!
+    /    _    \
+   /    | |    \
+  (____/   \____)
+  
+
+stdout | src/commands/init.test.ts > runInit > detects defaults with error reading package.json
+
+                      --::=-                       
+                 ::-==:::::-==::                   
+               :::===::::::::===:::                
+             :::-===:::::::::-===:::               
+             .......=========-......:              
+                  .:=   ==  ==:                    
+                      .::===                       
+                     ::::::--                      
+                  ----:::::::::                    
+                 ===========-::::                  
+                =======-:::::::::                  
+                  =: :::::::::::                   
+  
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+      ✨ Cocov Configuration Complete! ✨
+  
+
+  Next Steps:
+  
+  1. Review your configuration:
+     cat .cocov/config.json
+
+  2. Run your first coverage check:
+     npx cocov run
+
+  3. (Optional) Visualize your coverage history:
+     npx cocov history
+
+  For more documentation, visit:
+  https://github.com/lguibr/cocov
+  
+
+       _..._
+     .'     '.
+    /  _   _  \
+    | (o)_(o) |
+    |   (_)   |   Protection Active!
+    /    _    \
+   /    | |    \
+  (____/   \____)
+  
+
+stdout | src/commands/init.test.ts > runInit > detects vitest runner
+
+                      --::=-                       
+                 ::-==:::::-==::                   
+               :::===::::::::===:::                
+             :::-===:::::::::-===:::               
+             .......=========-......:              
+                  .:=   ==  ==:                    
+                      .::===                       
+                     ::::::--                      
+                  ----:::::::::                    
+                 ===========-::::                  
+                =======-:::::::::                  
+                  =: :::::::::::                   
+  
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+      ✨ Cocov Configuration Complete! ✨
+  
+
+  Next Steps:
+  
+  1. Review your configuration:
+     cat .cocov/config.json
+
+  2. Run your first coverage check:
+     npx cocov run
+
+  3. (Optional) Visualize your coverage history:
+     npx cocov history
+
+  For more documentation, visit:
+  https://github.com/lguibr/cocov
+  
+
+       _..._
+     .'     '.
+    /  _   _  \
+    | (o)_(o) |
+    |   (_)   |   Protection Active!
+    /    _    \
+   /    | |    \
+  (____/   \____)
+  
+
+stdout | src/commands/init.test.ts > runInit > detects jest runner
+
+                      --::=-                       
+                 ::-==:::::-==::                   
+               :::===::::::::===:::                
+             :::-===:::::::::-===:::               
+             .......=========-......:              
+                  .:=   ==  ==:                    
+                      .::===                       
+                     ::::::--                      
+                  ----:::::::::                    
+                 ===========-::::                  
+                =======-:::::::::                  
+                  =: :::::::::::                   
+  
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+      ✨ Cocov Configuration Complete! ✨
+  
+
+  Next Steps:
+  
+  1. Review your configuration:
+     cat .cocov/config.json
+
+  2. Run your first coverage check:
+     npx cocov run
+
+  3. (Optional) Visualize your coverage history:
+     npx cocov history
+
+  For more documentation, visit:
+  https://github.com/lguibr/cocov
+  
+
+       _..._
+     .'     '.
+    /  _   _  \
+    | (o)_(o) |
+    |   (_)   |   Protection Active!
+    /    _    \
+   /    | |    \
+  (____/   \____)
+  
+
+stdout | src/commands/init.test.ts > runInit > prefers existing test script
+
+                      --::=-                       
+                 ::-==:::::-==::                   
+               :::===::::::::===:::                
+             :::-===:::::::::-===:::               
+             .......=========-......:              
+                  .:=   ==  ==:                    
+                      .::===                       
+                     ::::::--                      
+                  ----:::::::::                    
+                 ===========-::::                  
+                =======-:::::::::                  
+                  =: :::::::::::                   
+  
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+      ✨ Cocov Configuration Complete! ✨
+  
+
+  Next Steps:
+  
+  1. Review your configuration:
+     cat .cocov/config.json
+
+  2. Run your first coverage check:
+     npx cocov run
+
+  3. (Optional) Visualize your coverage history:
+     npx cocov history
+
+  For more documentation, visit:
+  https://github.com/lguibr/cocov
+  
+
+       _..._
+     .'     '.
+    /  _   _  \
+    | (o)_(o) |
+    |   (_)   |   Protection Active!
+    /    _    \
+   /    | |    \
+  (____/   \____)
+  
+
+stdout | src/commands/init.test.ts > runInit > aborts on cancellation
+
+                      --::=-                       
+                 ::-==:::::-==::                   
+               :::===::::::::===:::                
+             :::-===:::::::::-===:::               
+             .......=========-......:              
+                  .:=   ==  ==:                    
+                      .::===                       
+                     ::::::--                      
+                  ----:::::::::                    
+                 ===========-::::                  
+                =======-:::::::::                  
+                  =: :::::::::::                   
+  
+
+🚀 Welcome to Cocov: The Code Coverage Gate
+
+
+ ✓ src/commands/inject-readme.test.ts  (6 tests) 18ms
+ ❯ src/commands/init.test.ts  (7 tests | 4 failed) 13ms
+   ❯ src/commands/init.test.ts > runInit > detects defaults with error reading package.json
+     → expected "askInitQuestions" to be called with arguments: [ false, ObjectContaining{…} ]
+
+Received: 
+
+  1st askInitQuestions call:
+
+  Array [
+-   false,
+-   ObjectContaining {
++   true,
++   Object {
+      "runner": "other",
+      "testCommand": "npm test",
+    },
+  ]
+
+
+Number of calls: 1
+
+   ❯ src/commands/init.test.ts > runInit > detects vitest runner
+     → expected "askInitQuestions" to be called with arguments: [ false, ObjectContaining{…} ]
+
+Received: 
+
+  1st askInitQuestions call:
+
+  Array [
+-   false,
+-   ObjectContaining {
++   true,
++   Object {
+      "runner": "vitest",
+      "testCommand": "npx vitest run",
+    },
+  ]
+
+
+Number of calls: 1
+
+   ❯ src/commands/init.test.ts > runInit > detects jest runner
+     → expected "askInitQuestions" to be called with arguments: [ false, ObjectContaining{…} ]
+
+Received: 
+
+  1st askInitQuestions call:
+
+  Array [
+-   false,
+-   ObjectContaining {
++   true,
++   Object {
+      "runner": "jest",
+      "testCommand": "npx jest",
+    },
+  ]
+
+
+Number of calls: 1
+
+   ❯ src/commands/init.test.ts > runInit > prefers existing test script
+     → expected "askInitQuestions" to be called with arguments: [ false, ObjectContaining{…} ]
+
+Received: 
+
+  1st askInitQuestions call:
+
+  Array [
+-   false,
+-   ObjectContaining {
++   true,
++   Object {
+      "runner": "vitest",
+      "testCommand": "npm test",
+    },
+  ]
+
+
+Number of calls: 1
+
+stdout | src/commands/run.test.ts > runAction > runs test command and handles baseline
+Running test command: npm test...
+
+stdout | src/commands/run.test.ts > runAction > enforces stack guard if enabled
+Running test command: npm test...
+
+stdout | src/commands/run.test.ts > runAction > runs diff check if enabled
+Running test command: npm test...
+
+stdout | src/commands/run.test.ts > runAction > handles dry run
+Running test command: npm test...
+🚧 DRY RUN MODE: No baseline updates.
+
+stdout | src/commands/run.test.ts > runAction > handles errors gracefully
+Running test command: npm test...
+
+stdout | src/commands/run.test.ts > runAction > handles unknown errors
+Running test command: npm test...
+
+stdout | src/commands/run.test.ts > runAction > handles ThresholdError
+Running test command: npm test...
+
+ ✓ src/commands/run.test.ts  (7 tests) 8ms
+stdout | src/core/logic/baseline-handler.test.ts > handleBaselineCheck > writes baseline if none exists (not dry run)
+No baseline found. Saving current coverage as baseline.
+
+stdout | src/core/logic/baseline-handler.test.ts > handleBaselineCheck > does not write baseline if none exists (dry run)
+No baseline found. (Dry Run: Not saving).
+
+stdout | src/core/logic/baseline-handler.test.ts > handleBaselineCheck > exits on regression
+
+Coverage unchanged.
+
+stdout | src/core/logic/baseline-handler.test.ts > handleBaselineCheck > updates baseline on improvement
+
+✔ Coverage improved! Updating baseline.
+
+stdout | src/core/logic/baseline-handler.test.ts > handleBaselineCheck > does not update baseline on improvement (dry run)
+
+✔ Coverage improved! (Dry Run: Baseline NOT updated).
+
+ ✓ src/core/logic/baseline-handler.test.ts  (6 tests) 18ms
+stdout | src/stack-guard.test.ts > StackGuard > check > passes when requirements met
+Running Stack Guard...
+✔ Stack Check Passed
+
+stdout | src/stack-guard.test.ts > StackGuard > check > fails when required dep missing
+Running Stack Guard...
+
+stdout | src/stack-guard.test.ts > StackGuard > check > fails when forbidden dep present
+Running Stack Guard...
+
+stdout | src/stack-guard.test.ts > StackGuard > check > passes if no stack config
+Running Stack Guard...
+✔ Stack Check Passed
+
+stdout | src/stack-guard.test.ts > StackGuard > check > warns if tsconfig missing
+Running Stack Guard...
+✔ Stack Check Passed
+
+stdout | src/stack-guard.test.ts > StackGuard > check > fails if package.json missing
+Running Stack Guard...
+
+ ✓ src/stack-guard.test.ts  (6 tests) 8ms
+ ✓ src/core/init/questions.test.ts  (3 tests) 7ms
+stdout | src/core/init/questions.test.ts > askInitQuestions > prompts for overwrite if config exists
+Running questions test case 1
+DEBUG: askInitQuestions executing
+
+stdout | src/core/init/questions.test.ts > askInitQuestions > skips prompts if config does not exist
+Running questions test case 2
+DEBUG: askInitQuestions executing
+
+stdout | src/core/init/questions.test.ts > askInitQuestions > validates prompt definitions
+DEBUG: askInitQuestions executing
+
+ ✓ src/core/logic/diff-parser.spec.ts  (20 tests) 5ms
+ ✓ src/history.test.ts  (4 tests) 6ms
+ ✓ src/core/logic/threshold-coverage.test.ts  (4 tests) 4ms
+stdout | src/commands/markdown.test.ts > markdownAction > generates markdown file
+✔ Markdown report generated at .cocov/reports/summary.md
+
+stdout | src/commands/markdown.test.ts > markdownAction > injects into README when option provided
+✔ Injected report into README.md
+
+stdout | src/commands/markdown.test.ts > markdownAction > logs warning if injection fails
+⚠ Could not find injection markers in README.md
+  Add <!-- cocov-start --> and <!-- cocov-end --> to your file.
+
+ ✓ src/commands/markdown.test.ts  (4 tests) 11ms
+ ✓ src/utils/banner.test.ts  (3 tests) 4ms
+ ✓ src/core/logic/comparator.spec.ts  (400 tests) 46ms
+ ✓ src/reporter.test.ts  (2 tests) 11ms
+ ✓ src/core/logic/threshold-validator.test.ts  (3 tests) 4ms
+ ✓ src/core/logic/diff-checker.test.ts  (4 tests) 183ms
+ ✓ src/core/logic/threshold-gate.test.ts  (3 tests) 3ms
+stdout | src/commands/debug-html.test.ts > Debug HTML > runs html action
+Running HTML Action...
+✔ HTML report generated at .cocov/reports/index.html
+Done HTML Action
+
+ ✓ src/commands/debug-html.test.ts  (2 tests) 5ms
+ ✓ src/core/integrity.test.ts  (4 tests) 6ms
+ ✓ src/executor.test.ts  (2 tests) 4ms
+ ✓ src/injector.test.ts  (3 tests) 6ms
+stdout | src/core/logic/diff-runner.test.ts > runDiffCheck > skips if detailed coverage missing
+
+🔍 Running Diff-Aware Strict Mode...
+
+stdout | src/core/logic/diff-runner.test.ts > runDiffCheck > passes if no diffs
+
+🔍 Running Diff-Aware Strict Mode...
+✔ Diff Strict Mode Passed: All changes covered.
+
+stdout | src/core/logic/diff-runner.test.ts > runDiffCheck > exits if uncovered changes
+
+🔍 Running Diff-Aware Strict Mode...
+
+ ✓ src/core/logic/diff-runner.test.ts  (3 tests) 4ms
+ ✓ src/core/html/generator.test.ts  (1 test) 1ms
+
+ Test Files  1 failed | 28 passed (29)
+      Tests  4 failed | 572 passed (576)
+   Start at  14:04:30
+   Duration  1.04s (transform 817ms, setup 2ms, collect 2.61s, tests 461ms, environment 11ms, prepare 2.71s)
+

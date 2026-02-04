@@ -9,10 +9,22 @@ export async function scaffoldConfig(cwd: string, answers: InitAnswers): Promise
   await fs.ensureDir(hiddenDir);
   const configPath = path.join(hiddenDir, 'config.json');
 
+  let testCmd = answers.testCommand || 'npm test';
 
+  if (answers.configureCoverage) {
+    if (answers.runner === 'vitest' && !testCmd.includes('coverage')) {
+      testCmd += ' --coverage --coverage.reporter=json-summary --coverage.reporter=text';
+    } else if (answers.runner === 'jest' && !testCmd.includes('coverage')) {
+      testCmd += ' --coverage --coverageReporters=json-summary --coverageReporters=text';
+    }
+  }
 
   const config = {
+    testCommand: testCmd,
     total: 0,
+    html: {
+      enabled: answers.generateHtml ?? true
+    },
     stack: answers.enableStackGuard
       ? {
           required: answers.requiredDeps || [],

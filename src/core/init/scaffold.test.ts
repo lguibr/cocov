@@ -10,22 +10,100 @@ vi.mock('execa', () => ({ execa: vi.fn() }));
 describe('scaffoldConfig', () => {
   it('creates .cocov/config.json', async () => {
     const cwd = '/cwd';
-    await scaffoldConfig(cwd, { enableStackGuard: true });
+    await scaffoldConfig(cwd, { enableStackGuard: true, testCommand: 'npm test' });
 
     expect(fs.writeJSON).toHaveBeenCalledWith(
       path.join(cwd, '.cocov', 'config.json'),
-      expect.objectContaining({ stack: { required: [], forbidden: [] } }),
+      expect.objectContaining({ 
+        stack: { required: [], forbidden: [] },
+        testCommand: 'npm test'
+      }),
       expect.anything(),
     );
   });
 
   it('creates .cocov/config.json without stack if disabled', async () => {
     const cwd = '/cwd';
-    await scaffoldConfig(cwd, { enableStackGuard: false });
+    await scaffoldConfig(cwd, { enableStackGuard: false, testCommand: 'vitest' });
 
     expect(fs.writeJSON).toHaveBeenCalledWith(
       path.join(cwd, '.cocov', 'config.json'),
-      expect.objectContaining({ stack: undefined }),
+      expect.objectContaining({ stack: undefined, testCommand: 'vitest' }),
+      expect.anything(),
+    );
+  });
+
+  it('appends coverage flags for vitest', async () => {
+    const cwd = '/cwd';
+    await scaffoldConfig(cwd, { 
+      enableStackGuard: false, 
+      testCommand: 'vitest run', 
+      configureCoverage: true, 
+      runner: 'vitest' 
+    });
+
+    expect(fs.writeJSON).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ testCommand: 'vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=text' }),
+      expect.anything(),
+    );
+  });
+
+  it('appends coverage flags for jest', async () => {
+    const cwd = '/cwd';
+    await scaffoldConfig(cwd, { 
+      enableStackGuard: false, 
+      testCommand: 'jest', 
+      configureCoverage: true, 
+      runner: 'jest' 
+    });
+
+    expect(fs.writeJSON).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ testCommand: 'jest --coverage --coverageReporters=json-summary --coverageReporters=text' }),
+      expect.anything(),
+    );
+  });
+
+  it('uses default stack config when enabled but no deps provided', async () => {
+    const cwd = '/cwd';
+    await scaffoldConfig(cwd, { enableStackGuard: true });
+
+    expect(fs.writeJSON).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ 
+        stack: { required: [], forbidden: [] }
+      }),
+      expect.anything(),
+    );
+  });
+
+  it('saves html config as enabled by default', async () => {
+    const cwd = '/cwd';
+    await scaffoldConfig(cwd, { enableStackGuard: true });
+
+    expect(fs.writeJSON).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ 
+          testCommand: expect.stringContaining('npm'),
+          html: { enabled: true }
+      }),
+      expect.anything(),
+    );
+  });
+
+  it('saves html config as disabled when requested', async () => {
+    const cwd = '/cwd';
+    await scaffoldConfig(cwd, { 
+        enableStackGuard: false,
+        generateHtml: false 
+    });
+
+    expect(fs.writeJSON).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ 
+        html: { enabled: false }
+      }),
       expect.anything(),
     );
   });

@@ -60,6 +60,12 @@ describe('cli', () => {
     expect(mocks.badgeAction).toHaveBeenCalled();
   });
 
+  it('triggers markdown command', async () => {
+    const program = await createProgram();
+    await program.parseAsync(['markdown'], { from: 'user' });
+    expect(mocks.markdownAction).toHaveBeenCalled();
+  });
+
   it('triggers inject-readme command', async () => {
     const program = await createProgram();
     await program.parseAsync(['inject-readme'], { from: 'user' });

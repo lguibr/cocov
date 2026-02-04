@@ -93,6 +93,23 @@ describe('injectReadmeAction', () => {
     );
   });
 
+  it('ignores badge cluster if too far down', async () => {
+    vi.mocked(fs.pathExists as any).mockResolvedValue(true);
+    // Create a large file padding to force regex loop break
+    const padding = 'a'.repeat(2500);
+    vi.mocked(fs.readFile).mockResolvedValue(`# Title\n\n${padding}\n![License](https://img.shields.io/license)\nDescription`);
+    vi.mocked(prompts).mockResolvedValue({ confirm: true });
+
+    await injectReadmeAction();
+
+    // Should behave as if no badge cluster found (inject after title)
+    expect(fs.writeFile).toHaveBeenCalledWith(
+        expect.stringContaining('README.md'),
+        expect.stringContaining('# Title\n\n<!-- COCOV_BADGES_START -->'),
+        'utf-8'
+    );
+  });
+
   it('updates existing badges if markers found', async () => {
     vi.mocked(fs.pathExists as any).mockResolvedValue(true);
     const existingContent = `
