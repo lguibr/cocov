@@ -1,0 +1,11 @@
+{
+  "thresholds": {
+    "lines": 96,
+    "functions": 96,
+    "statements": 96,
+    "branches": 94
+  },
+  "git": {
+    "enforceClean": true
+  }
+}
