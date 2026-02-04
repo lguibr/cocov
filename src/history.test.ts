@@ -3,12 +3,16 @@ import { HistoryManager } from './history.js';
 import fs from 'fs-extra';
 import path from 'path';
 
+import readline from 'readline';
+
+vi.mock('readline');
 vi.mock('fs-extra', () => ({
   default: {
     ensureDir: vi.fn(),
     appendFile: vi.fn(),
     pathExists: vi.fn(),
     readFile: vi.fn(),
+    createReadStream: vi.fn(),
   },
 }));
 
@@ -24,15 +28,16 @@ describe('HistoryManager', () => {
   describe('append', () => {
     it('appends entry to history file', async () => {
       const mockMetrics = { 
-        lines: { pct: 80 },
-        statements: { pct: 80 },
-        functions: { pct: 80 },
-        branches: { pct: 80 }
+        lines: { pct: 80, total: 100, covered: 80, skipped: 20 },
+        statements: { pct: 80, total: 100, covered: 80, skipped: 20 },
+        functions: { pct: 80, total: 100, covered: 80, skipped: 20 },
+        branches: { pct: 80, total: 100, covered: 80, skipped: 20 }
       };
       const mockContext = { 
         timestamp: new Date('2023-01-01'), 
         commitHash: 'abc', 
-        branch: 'main' 
+        branch: 'main',
+        cwd: mockCwd
       };
 
       await manager.append(mockMetrics, mockContext);
@@ -55,7 +60,23 @@ describe('HistoryManager', () => {
 
     it('parses valid history entries', async () => {
       vi.mocked(fs.pathExists).mockResolvedValue(true);
-      vi.mocked(fs.readFile).mockResolvedValue('{"metrics":{}}\n{"metrics":{}}\n');
+      
+      const mockStream = {
+        [Symbol.asyncIterator]: async function* () {
+          yield '{"metrics":{}}\n';
+          yield '{"metrics":{}}\n';
+        }
+      };
+      // @ts-ignore
+      vi.mocked(fs.createReadStream).mockReturnValue(mockStream);
+      
+      // Mock readline to iterate the provided stream (since we are mocking createInterface)
+       vi.mocked(readline.createInterface).mockReturnValue({
+        [Symbol.asyncIterator]: async function* () {
+            yield '{"metrics":{}}';
+            yield '{"metrics":{}}';
+        }
+      } as any);
       
       const history = await manager.readHistory();
       expect(history).toHaveLength(2);
@@ -63,7 +84,13 @@ describe('HistoryManager', () => {
 
     it('filters invalid lines', async () => {
       vi.mocked(fs.pathExists).mockResolvedValue(true);
-      vi.mocked(fs.readFile).mockResolvedValue('{"valid":true}\nINVALID_JSON\n');
+      
+      vi.mocked(readline.createInterface).mockReturnValue({
+        [Symbol.asyncIterator]: async function* () {
+            yield '{"valid":true}';
+            yield 'INVALID_JSON';
+        }
+      } as any);
       
       const history = await manager.readHistory();
       expect(history).toHaveLength(1);

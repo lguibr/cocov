@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import readline from 'readline';
 import { CoverageSummary, HistoryEntry, RunContext } from './types.js';
 
 export class HistoryManager {
@@ -30,7 +31,7 @@ export class HistoryManager {
   }
 
   /**
-   * Reads and parses the entire history file.
+   * Reads and parses the entire history file using streams.
    * Gracefully ignores malformed JSON lines.
    * 
    * @returns {Promise<HistoryEntry[]>} Array of valid history entries
@@ -40,17 +41,25 @@ export class HistoryManager {
       return [];
     }
 
-    const content = await fs.readFile(this.historyPath, 'utf8');
-    return content
-      .split('\n')
-      .filter((line) => line.trim().length > 0)
-      .map((line) => {
-        try {
-          return JSON.parse(line);
-        } catch {
-          return null;
-        }
-      })
-      .filter((entry): entry is HistoryEntry => entry !== null);
+    const entries: HistoryEntry[] = [];
+    const fileStream = fs.createReadStream(this.historyPath);
+
+    const rl = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity
+    });
+
+    for await (const line of rl) {
+      if (!line.trim()) continue;
+      try {
+        const entry = JSON.parse(line);
+        entries.push(entry);
+      } catch {
+        // Ignore malformed lines
+      }
+    }
+
+    return entries;
   }
 }
+

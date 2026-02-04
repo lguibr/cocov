@@ -3,6 +3,10 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { runInit } from './commands/init.js';
 import { showBanner } from './utils/banner.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs-extra';
+
 
 /**
  * Creates the main CLI program instance with all commands configured.
@@ -13,7 +17,19 @@ export async function createProgram(): Promise<Command> {
   await showBanner();
   const program = new Command();
 
-  program.name('cocov').description('Code coverage regression guard').version('1.0.0');
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  let version = '1.0.0';
+
+  try {
+    const pkgPath = path.resolve(__dirname, '../package.json');
+    const pkg = await fs.readJSON(pkgPath);
+    version = pkg.version;
+  } catch (e) {
+    // Fallback if package.json not found (dev env usually)
+  }
+
+  program.name('cocov').description('Code coverage regression guard').version(version);
 
 
   program
@@ -41,6 +57,7 @@ export async function createProgram(): Promise<Command> {
     .option('--dry-run', 'Simulate checks but do not update baseline')
     .option('-f, --file <file>', 'Path to custom coverage file')
     .option('--diff', 'Enforce 100% coverage on changed lines (Strict Mode)')
+    .option('--ui', 'Show Terminal UI Dashboard')
     .action(async (cmd, options) => {
       const { runAction } = await import('./commands/run.js');
       await runAction(cmd, options);
@@ -85,8 +102,27 @@ export async function createProgram(): Promise<Command> {
       await injectReadmeAction();
     });
 
+  program
+    .command('comment')
+    .description('Post coverage report as a GitHub PR comment (Serverless)')
+    .action(async () => {
+       const { commentAction } = await import('./commands/comment.js');
+       await commentAction();
+    });
+
+  program
+    .command('prune')
+    .description('Prune history file to keep only recent entries')
+    .option('-k, --keep <number>', 'Number of entries to keep', '100')
+    .action(async (cmd, options) => {
+       const { pruneAction } = await import('./commands/prune.js');
+       await pruneAction(cmd, options);
+    });
+
   return program;
 }
+
+
 
 /* v8 ignore start */
 if (process.argv[1].endsWith('cli.js') || process.argv[1].endsWith('cli.ts') || process.argv[1].endsWith('cocov')) {

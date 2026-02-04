@@ -36,6 +36,13 @@ export interface CocovConfig {
     functions?: number;
     branches?: number;
   };
+  threshold?: number; // Legacy or alternative
+  stack?: string[];
+  html?: {
+    enabled?: boolean;
+    output?: string;
+  };
+  [key: string]: any;
 }
 
 export interface CoverageLocation {

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createProgram } from './cli.js';
+import fs from 'fs-extra';
 
 const mocks = vi.hoisted(() => ({
   runAction: vi.fn(),
@@ -27,9 +28,12 @@ vi.mock('@/commands/inject-readme.js', () => ({ injectReadmeAction: mocks.inject
 
 describe('cli', () => {
   it('creates program with correct name and version', async () => {
+    // Mock cli.ts internal fs read
+    vi.spyOn(fs, 'readJSON').mockResolvedValue({ version: '3.4.1' });
+    
     const program = await createProgram();
     expect(program.name()).toBe('cocov');
-    expect(program.version()).toBe('1.0.0');
+    expect(program.version()).toBe('3.4.1');
   });
 
   it('triggers init command', async () => {

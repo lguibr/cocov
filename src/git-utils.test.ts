@@ -75,4 +75,24 @@ index e43e2b4..6dd38e3 100644
       expect(result).toEqual({});
     });
   });
+
+  describe('validateGitHistory', () => {
+    it('warns if repo is shallow', async () => {
+      vi.mocked(execa).mockResolvedValue({ stdout: 'true' } as never);
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      
+      await gitUtils.validateGitHistory();
+      
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Shallow repository detected'));
+    });
+
+    it('does not warn if repo is full', async () => {
+      vi.mocked(execa).mockResolvedValue({ stdout: 'false' } as never);
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      
+      await gitUtils.validateGitHistory();
+      
+      expect(consoleSpy).not.toHaveBeenCalled();
+    });
+  });
 });

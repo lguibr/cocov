@@ -2,7 +2,16 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import prompts from 'prompts';
-import { badgeAction } from './badge.js';
+import { readCurrentCoverage, readBaseline } from '@/core/coverage/reader.js';
+import { loadCocovConfig } from '@/config-loader.js';
+
+function getColor(pct: number, high = 90, medium = 80): string {
+  if (pct >= high) return 'success'; // green-ish in shields.io usually 'success' or 'brightgreen'
+  // Shields.io standard colors: brightgreen, green, yellowgreen, yellow, orange, red
+  if (pct >= high) return 'brightgreen';
+  if (pct >= medium) return 'yellow';
+  return 'red';
+}
 
 export async function injectReadmeAction(): Promise<void> {
   const targetFile = 'README.md';
@@ -13,23 +22,64 @@ export async function injectReadmeAction(): Promise<void> {
     return;
   }
 
-  // 1. Ensure badges exist (generate 'all')
-  console.log(chalk.blue('ℹ Generating badges in assets/badges/...'));
-  await badgeAction({ type: 'all', output: 'assets/badges/cocov-badge.svg' });
-
+  // 1. Read Coverage Data
+  console.log(chalk.blue('ℹ Reading coverage data...'));
+  const current = await readCurrentCoverage(process.cwd());
+  const config = await loadCocovConfig(process.cwd());
+  const thresholds = config.thresholds || {};
+  
+  // Defaults
+  const lineThresh = thresholds.lines || 80;
+  
   // 2. Prepare Injection Payload
-  const reportPath = './coverage/index.html'; // Default location
-  // Use absolute URL so badges render anywhere (NPM, external docs) and users can copy-paste
-  const badgeBaseUrl = 'https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges';
+  const repoBaseUrl = 'https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges';
+  const repoUrl = 'https://github.com/lguibr/cocov';
 
-  // User requested "show off" mode: Unified, Individuals, Diffs
+  const mkBadge = (metric: string, pct: number) => {
+      // Clamp to 0-100
+      const val = Math.max(0, Math.min(100, Math.round(pct)));
+      // e.g. lines-85.svg, branches-50.svg
+      return `${repoBaseUrl}/${metric}-${val}.svg`;
+  };
+
+  const mkDiffBadge = (metric: string, val: number) => {
+      // Clamp to -100 to +100
+      const clamped = Math.max(-100, Math.min(100, Math.round(val)));
+      return `${repoBaseUrl}/${metric}-diff-${clamped}.svg`;
+  };
+
+  // Metrics
+  const l = current.total.lines.pct;
+  const s = current.total.statements.pct;
+  const f = current.total.functions.pct;
+  const b = current.total.branches.pct;
+  
+  // Diff Logic
+  const baseline = await readBaseline(process.cwd());
+  let diffPayload = '';
+  
+  if (baseline && baseline.total) {
+      const getDiff = (m: keyof typeof current.total) => {
+           const curr = current.total[m].pct;
+           const base = baseline.total[m]?.pct ?? curr;
+           return curr - base;
+      };
+
+      const dl = getDiff('lines');
+      const ds = getDiff('statements');
+      const df = getDiff('functions');
+      const db = getDiff('branches');
+
+      diffPayload = `
+<br>
+[![Diff Lines](${mkDiffBadge('lines', dl)})](${repoUrl}) [![Diff Statements](${mkDiffBadge('statements', ds)})](${repoUrl}) [![Diff Functions](${mkDiffBadge('functions', df)})](${repoUrl}) [![Diff Branches](${mkDiffBadge('branches', db)})](${repoUrl})
+`.trim();
+  }
+
+  // Final Payload with Granularity
   const payload = `
 <!-- COCOV_BADGES_START -->
-[![Cocov Unified](${badgeBaseUrl}/cocov-badge-unified.svg)](${reportPath})
-<br>
-[![Lines](${badgeBaseUrl}/cocov-badge-lines.svg)](${reportPath}) [![Statements](${badgeBaseUrl}/cocov-badge-statements.svg)](${reportPath}) [![Functions](${badgeBaseUrl}/cocov-badge-functions.svg)](${reportPath}) [![Branches](${badgeBaseUrl}/cocov-badge-branches.svg)](${reportPath})
-<br>
-[![Diff Lines](${badgeBaseUrl}/cocov-badge-diff-lines.svg)](${reportPath}) [![Diff Statements](${badgeBaseUrl}/cocov-badge-diff-statements.svg)](${reportPath}) [![Diff Functions](${badgeBaseUrl}/cocov-badge-diff-functions.svg)](${reportPath}) [![Diff Branches](${badgeBaseUrl}/cocov-badge-diff-branches.svg)](${reportPath})
+[![Lines](${mkBadge('lines', l)})](${repoUrl}) [![Statements](${mkBadge('statements', s)})](${repoUrl}) [![Functions](${mkBadge('functions', f)})](${repoUrl}) [![Branches](${mkBadge('branches', b)})](${repoUrl}) ${diffPayload}
 <!-- COCOV_BADGES_END -->
 `.trim();
 
@@ -101,3 +151,4 @@ export async function injectReadmeAction(): Promise<void> {
   await fs.writeFile(filePath, content, 'utf-8');
   console.log(chalk.green('✔ README.md updated with Cocov badges!'));
 }
+

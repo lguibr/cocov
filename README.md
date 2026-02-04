@@ -5,11 +5,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Version](https://img.shields.io/badge/version-3.3.0-purple.svg)
 <!-- COCOV_BADGES_START -->
-[![Cocov Unified](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-unified.svg)](./coverage/index.html)
-<br>
-[![Lines](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-lines.svg)](./coverage/index.html) [![Statements](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-statements.svg)](./coverage/index.html) [![Functions](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-functions.svg)](./coverage/index.html) [![Branches](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-branches.svg)](./coverage/index.html)
-<br>
-[![Diff Lines](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-diff-lines.svg)](./coverage/index.html) [![Diff Statements](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-diff-statements.svg)](./coverage/index.html) [![Diff Functions](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-diff-functions.svg)](./coverage/index.html) [![Diff Branches](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-diff-branches.svg)](./coverage/index.html)
+[![Coverage](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/coverage-98.svg)](https://github.com/lguibr/cocov) [![Diff](https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/diff--2.svg)](https://github.com/lguibr/cocov)
 <!-- COCOV_BADGES_END -->
 
 Cocov is a **Compliance Engine**. It enforces strict coverage baselines, prevents merge regressions via `husky` hooks, and generates audit-ready artifacts in Markdown and HTML.

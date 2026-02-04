@@ -2,8 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DiffChecker } from '@/diff-checker.js';
 import * as git from '@/git-utils.js';
 import path from 'path';
+import fs from 'fs-extra';
 
 vi.mock('@/git-utils.js');
+vi.mock('fs-extra');
 
 describe('DiffChecker', () => {
   const cwd = '/test';
@@ -24,6 +26,10 @@ describe('DiffChecker', () => {
     vi.mocked(git.getChangedLines).mockResolvedValue({
       'src/foo.ts': [10, 11],
     });
+
+    // Mock file read for Smart Diff
+    // Must have enough lines so line 10 is not out of bounds
+    vi.mocked(fs.readFile).mockResolvedValue('\n'.repeat(9) + 'console.log("foo");\nconsole.log("bar");');
 
     // Mock detailed coverage
     const detailed = {

@@ -1,6 +1,23 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
+import { execa } from 'execa';
+
+/**
+ * Checks if the git working directory is clean.
+ * Warns if there are uncommitted changes which might affect coverage accuracy.
+ */
+export async function verifyGitStatus(): Promise<void> {
+  try {
+     const { stdout } = await execa('git', ['status', '--porcelain']);
+     if (stdout.trim().length > 0) {
+         console.warn(chalk.yellow('⚠  Uncommitted changes detected. Coverage report might not match current code on disk.'));
+     }
+  } catch {
+      // Not a git repo or other error, suppress
+  }
+}
+
 
 /**
  * Verifies that the coverage data is fresh (created recently).

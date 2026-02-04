@@ -1,5 +1,23 @@
 import { execa } from 'execa';
 import parseDiff from 'parse-diff';
+import chalk from 'chalk';
+
+/**
+ * Validates that the git repository has enough history for accurate diffs.
+ * Warns if a shallow clone is detected.
+ */
+export async function validateGitHistory(): Promise<void> {
+  try {
+    const { stdout } = await execa('git', ['rev-parse', '--is-shallow-repository']);
+    if (stdout.trim() === 'true') {
+      console.warn(chalk.yellow('⚠ Shallow repository detected. Diff checks may fail or be inaccurate.'));
+      console.warn(chalk.yellow('  Action: Set "fetch-depth: 0" in your CI workflow to ensure full history.'));
+    }
+  } catch {
+    // Ignore errors if not a git repo or git is missing (handled elsewhere usually)
+  }
+}
+
 
 /**
  * Retrieves the current git commit hash (HEAD).

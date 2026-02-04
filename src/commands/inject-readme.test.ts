@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { injectReadmeAction } from './inject-readme.js';
 import fs from 'fs-extra';
-import { badgeAction } from './badge.js';
 import prompts from 'prompts';
+import { readCurrentCoverage, readBaseline } from '@/core/coverage/reader.js';
+import { loadCocovConfig } from '@/config-loader.js';
 
 vi.mock('fs-extra');
-vi.mock('./badge.js');
 vi.mock('prompts');
+vi.mock('@/core/coverage/reader.js');
+vi.mock('@/config-loader.js');
 
 describe('injectReadmeAction', () => {
   let consoleLogSpy: any;
@@ -16,6 +18,18 @@ describe('injectReadmeAction', () => {
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.clearAllMocks();
+
+    // Default successful mocks
+    vi.mocked(readCurrentCoverage).mockResolvedValue({
+        total: {
+            lines: { pct: 80, total: 100, covered: 80, skipped: 0 },
+            statements: { pct: 80, total: 100, covered: 80, skipped: 0 },
+            functions: { pct: 80, total: 100, covered: 80, skipped: 0 },
+            branches: { pct: 80, total: 100, covered: 80, skipped: 0 }
+        }
+    } as any);
+    vi.mocked(readBaseline).mockResolvedValue(null);
+    vi.mocked(loadCocovConfig).mockResolvedValue({});
   });
 
   afterEach(() => {
@@ -28,22 +42,21 @@ describe('injectReadmeAction', () => {
     expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('Could not find README.md'));
   });
 
-  it('injects new badges if no markers found (confirmation yes)', async () => {
+  it('injects new badges with dynamic Shields.io URLs', async () => {
     vi.mocked(fs.pathExists as any).mockResolvedValue(true);
     vi.mocked(fs.readFile).mockResolvedValue('# My Project\nDescription');
     vi.mocked(prompts).mockResolvedValue({ confirm: true });
 
     await injectReadmeAction();
 
-    expect(badgeAction).toHaveBeenCalledWith({ type: 'all', output: 'assets/badges/cocov-badge.svg' });
     expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('README.md'),
-        expect.stringContaining('https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/cocov-badge-unified.svg'),
+        expect.stringContaining('https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/lines-80.svg'),
         'utf-8'
     );
     expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('README.md'),
-        expect.stringContaining('My Project'), // Integrity check
+        expect.stringContaining('https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/branches-80.svg'),
         'utf-8'
     );
     expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('README.md updated'));
@@ -56,61 +69,46 @@ describe('injectReadmeAction', () => {
 
     await injectReadmeAction();
 
-    expect(badgeAction).toHaveBeenCalledWith({ type: 'all', output: 'assets/badges/cocov-badge.svg' }); // Still generates badges
     expect(fs.writeFile).not.toHaveBeenCalled();
     expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Skipped'));
   });
 
-  it('prepends badges if no H1 found (new injection)', async () => {
+  it('prepends badges if no H1 found', async () => {
     vi.mocked(fs.pathExists as any).mockResolvedValue(true);
     vi.mocked(fs.readFile).mockResolvedValue('Just some text\nNo header here.');
     vi.mocked(prompts).mockResolvedValue({ confirm: true });
 
     await injectReadmeAction();
 
-    expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('README.md'),
-        expect.stringContaining('<!-- COCOV_BADGES_START -->\n[![Cocov Unified]'),
-        'utf-8'
-    );
-     // Should be at the start
     const callArgs = vi.mocked(fs.writeFile).mock.calls[0];
     const writtenContent = callArgs[1] as string;
     expect(writtenContent.startsWith('<!-- COCOV_BADGES_START -->')).toBe(true);
   });
 
-  it('injects after existing badge cluster', async () => {
+  it('injects diff badges if baseline exists', async () => {
     vi.mocked(fs.pathExists as any).mockResolvedValue(true);
-    vi.mocked(fs.readFile).mockResolvedValue('# Title\n![License](https://img.shields.io/license)\nDescription');
+    vi.mocked(fs.readFile).mockResolvedValue('# My Project');
     vi.mocked(prompts).mockResolvedValue({ confirm: true });
+    
+    vi.mocked(readBaseline).mockResolvedValue({
+        total: {
+            lines: { pct: 70, total: 100, covered: 70, skipped: 0 },
+            statements: { pct: 70, total: 100, covered: 70, skipped: 0 },
+            functions: { pct: 70, total: 100, covered: 70, skipped: 0 },
+            branches: { pct: 70, total: 100, covered: 70, skipped: 0 },
+        }
+    } as any);
 
     await injectReadmeAction();
 
     expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('README.md'),
-        expect.stringContaining('![License](https://img.shields.io/license)\n<!-- COCOV_BADGES_START -->'),
+        expect.stringContaining('https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/lines-diff-10.svg'),
         'utf-8'
     );
   });
 
-  it('ignores badge cluster if too far down', async () => {
-    vi.mocked(fs.pathExists as any).mockResolvedValue(true);
-    // Create a large file padding to force regex loop break
-    const padding = 'a'.repeat(2500);
-    vi.mocked(fs.readFile).mockResolvedValue(`# Title\n\n${padding}\n![License](https://img.shields.io/license)\nDescription`);
-    vi.mocked(prompts).mockResolvedValue({ confirm: true });
-
-    await injectReadmeAction();
-
-    // Should behave as if no badge cluster found (inject after title)
-    expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('README.md'),
-        expect.stringContaining('# Title\n\n<!-- COCOV_BADGES_START -->'),
-        'utf-8'
-    );
-  });
-
-  it('updates existing badges if markers found', async () => {
+  it('updates existing badges correctly', async () => {
     vi.mocked(fs.pathExists as any).mockResolvedValue(true);
     const existingContent = `
 # My Project
@@ -121,18 +119,62 @@ Description
     `.trim();
     vi.mocked(fs.readFile).mockResolvedValue(existingContent);
 
+    // Change coverage to 95%
+    vi.mocked(readCurrentCoverage).mockResolvedValue({
+        total: {
+            lines: { pct: 95, total: 100, covered: 95, skipped: 0 },
+            statements: { pct: 95, total: 100, covered: 95, skipped: 0 },
+            functions: { pct: 95, total: 100, covered: 95, skipped: 0 },
+            branches: { pct: 95, total: 100, covered: 95, skipped: 0 }
+        }
+    } as any);
+
     await injectReadmeAction();
-    expect(badgeAction).toHaveBeenCalledWith({ type: 'all', output: 'assets/badges/cocov-badge.svg' });
+
     expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('README.md'),
-        expect.stringContaining('<!-- COCOV_BADGES_START -->'),
+        expect.not.stringContaining('Old Badges'),
         'utf-8'
     );
     expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('README.md'),
-        expect.not.stringContaining('Old Badges'), // Should be replaced
+        expect.stringContaining('https://raw.githubusercontent.com/lguibr/cocov/main/assets/badges/lines-95.svg'),
         'utf-8'
     );
-     expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Updating existing'));
+  });
+
+  it('clamps values to available assets', async () => {
+    vi.mocked(fs.pathExists as any).mockResolvedValue(true);
+    vi.mocked(fs.readFile).mockResolvedValue('# Test');
+    vi.mocked(prompts).mockResolvedValue({ confirm: true });
+    
+    // Test > 100 coverage and < -100 diff
+    vi.mocked(readCurrentCoverage).mockResolvedValue({
+        total: {
+            lines: { pct: 105, total: 100, covered: 105, skipped: 0 },
+            statements: { pct: 105, total: 100, covered: 105, skipped: 0 },
+            functions: { pct: 105, total: 100, covered: 105, skipped: 0 },
+            branches: { pct: 105, total: 100, covered: 105, skipped: 0 }
+        }
+    } as any);
+    
+     vi.mocked(readBaseline).mockResolvedValue({
+        total: {
+            lines: { pct: 250, total: 100, covered: 250, skipped: 0 }, // Resulting diff will be -145
+        }
+    } as any);
+
+    await injectReadmeAction();
+
+    expect(fs.writeFile).toHaveBeenCalledWith(
+        expect.stringContaining('README.md'),
+        expect.stringContaining('lines-100.svg'), // Clamped 105 -> 100
+        'utf-8'
+    );
+    expect(fs.writeFile).toHaveBeenCalledWith(
+        expect.stringContaining('README.md'),
+        expect.stringContaining('lines-diff--100.svg'), // Clamped -145 -> -100
+        'utf-8'
+    );
   });
 });

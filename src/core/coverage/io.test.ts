@@ -13,6 +13,7 @@ describe('Coverage IO', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(fs.readdir).mockResolvedValue([]);
   });
 
   describe('readCurrentCoverage', () => {
@@ -27,7 +28,7 @@ describe('Coverage IO', () => {
     it('throws error if summary file missing', async () => {
       vi.mocked(fs.pathExists as any).mockResolvedValue(false); // eslint-disable-line @typescript-eslint/no-explicit-any
       
-      await expect(readCurrentCoverage(cwd)).rejects.toThrow('Could not find coverage summary');
+      await expect(readCurrentCoverage('/test/cwd')).rejects.toThrow('Could not find coverage file');
     });
   });
 

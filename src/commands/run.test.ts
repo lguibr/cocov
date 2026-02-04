@@ -7,8 +7,10 @@ import { runTestCommand } from '@/executor.js';
 import { runDiffCheck } from '@/core/logic/diff-runner.js';
 import { handleBaselineCheck } from '@/core/logic/baseline-handler.js';
 import { enforceThresholds, ThresholdError } from '@/core/logic/threshold-gate.js';
-import { verifyCoverageFreshness } from '@/core/integrity.js';
+import { verifyCoverageFreshness, verifyGitStatus } from '@/core/integrity.js';
 import { generateHtmlReport } from '@/core/html/runner.js';
+import { loadCocovConfig } from '@/config-loader.js';
+import { validateGitHistory } from '@/git-utils.js';
 import fs from 'fs-extra';
 
 vi.mock('../core/coverage/reader.js');
@@ -19,6 +21,9 @@ vi.mock('../core/logic/diff-runner.js');
 vi.mock('../core/logic/baseline-handler.js');
 vi.mock('../core/integrity.js');
 vi.mock('../core/html/runner.js');
+vi.mock('../config-loader.js');
+vi.mock('../git-utils.js');
+
 vi.mock('fs-extra', () => {
   const mockFs = {
     pathExists: vi.fn(),
@@ -29,12 +34,14 @@ vi.mock('fs-extra', () => {
     appendFile: vi.fn(),
     readFile: vi.fn(),
     stat: vi.fn(),
+    readJson: vi.fn(),
   };
   return {
     default: mockFs,
     ...mockFs,
   };
 });
+
 vi.mock('../core/logic/threshold-gate.js', async () => {
   const actual = await vi.importActual('../core/logic/threshold-gate.js');
   return {
@@ -49,12 +56,15 @@ describe('runAction', () => {
     vi.spyOn(process, 'cwd').mockReturnValue('/cwd');
     vi.mocked(readBaseline).mockResolvedValue({ stack: {}, total: 0, testCommand: 'npm test' } as never);
     vi.mocked(readCurrentCoverage).mockResolvedValue({ total: { lines: { pct: 80 } } } as never);
+    vi.mocked(loadCocovConfig).mockResolvedValue({});
   });
 
   it('runs test command and handles baseline', async () => {
     await runAction('npm test', {});
     
     expect(verifyCoverageFreshness).toHaveBeenCalled();
+    expect(verifyGitStatus).toHaveBeenCalled();
+    expect(validateGitHistory).toHaveBeenCalled();
     expect(runTestCommand).toHaveBeenCalledWith('npm test');
     expect(handleBaselineCheck).toHaveBeenCalled();
   });
@@ -113,9 +123,7 @@ describe('runAction', () => {
   });
 
   it('generates html report if enabled in config', async () => {
-    vi.mocked(fs.pathExists).mockResolvedValue(true);
-    vi.mocked(fs.readJSON).mockResolvedValue({ 
-      testCommand: 'npm test',
+    vi.mocked(loadCocovConfig).mockResolvedValue({ 
       html: { enabled: true }
     });
     vi.mocked(readBaseline).mockResolvedValue(null);
@@ -130,9 +138,7 @@ describe('runAction', () => {
   });
 
   it('skips html report if disabled in config', async () => {
-    vi.mocked(fs.pathExists).mockResolvedValue(true);
-    vi.mocked(fs.readJSON).mockResolvedValue({ 
-      testCommand: 'npm test',
+    vi.mocked(loadCocovConfig).mockResolvedValue({ 
       html: { enabled: false }
     });
     vi.mocked(readBaseline).mockResolvedValue(null);
@@ -147,7 +153,6 @@ describe('runAction', () => {
   });
 
   it('skips html report if config missing', async () => {
-    vi.mocked(fs.pathExists).mockResolvedValue(false);
     // @ts-ignore
     vi.mocked(readBaseline).mockResolvedValue(null);
     vi.mocked(readCurrentCoverage).mockResolvedValue({
@@ -158,5 +163,35 @@ describe('runAction', () => {
     await runAction('npm test', { dryRun: false });
 
     expect(generateHtmlReport).not.toHaveBeenCalled();
+  });
+  it('renders UI if --ui option is provided', async () => {
+    const mockRender = vi.fn();
+    const mockCreateElement = vi.fn();
+    const mockDashboard = vi.fn();
+
+    vi.doMock('ink', () => ({ render: mockRender }));
+    vi.doMock('react', () => ({ createElement: mockCreateElement }));
+    vi.doMock('../ui/dashboard.js', () => ({ Dashboard: mockDashboard }));
+    
+    // We need detailed coverage for UI
+    vi.mocked(readCurrentCoverage).mockResolvedValue({
+      total: { lines: { pct: 80 }, statements: { pct: 80 }, functions: { pct: 80 }, branches: { pct: 80 } },
+      files: {}
+    } as never);
+
+    // readDetailedCoverage is dynamically imported, we need to mock it effectively or assume top level mock works.
+    // Top level mock works for 'reader.js'. We need to make sure readDetailedCoverage is exposed.
+    // However, run.ts does: const { readDetailedCoverage } = await import(...)
+    // So the top level vi.mock('../core/coverage/reader.js') should handle it IF it mocks readDetailedCoverage.
+    // By default vitest automock creates spies for exports.
+    const reader = await import('../core/coverage/reader.js');
+    vi.mocked(reader.readDetailedCoverage).mockResolvedValue({ 'src/foo.ts': {} } as never);
+
+    await runAction('npm test', { ui: true });
+
+    // Since dynamic imports are async, and we used doMock, we hope they pick up.
+    // Actually top level mock is safer for dynamic imports usually if they share module registry.
+    expect(mockRender).toHaveBeenCalled();
+    expect(mockCreateElement).toHaveBeenCalled();
   });
 });
