@@ -54,6 +54,7 @@ export class SmartDiffChecker {
       // Check if our line's non-whitespace content is covered by these ranges.
       // Find the first non-whitespace char on the line.
       const firstCharOffset = lineContent.search(/\S/);
+      /* v8 ignore next */
       if (firstCharOffset === -1) return true; // Empty line handled, but just in case.
       
       const firstCharPos = start + firstCharOffset;

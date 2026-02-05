@@ -43,6 +43,30 @@ describe('LCOV Parser', () => {
         expect(records[1].file).toBe('src/file2.ts');
     });
 
+    it('parses function summary tags (FNF/FNH)', () => {
+        const lcov = `
+SF:src/file.ts
+FNF:5
+FNH:3
+end_of_record
+`;
+        const records = parseLcovContent(lcov);
+        expect(records).toHaveLength(1);
+        expect(records[0].functions.found).toBe(5);
+        expect(records[0].functions.hit).toBe(3);
+    });
+
+    it('handles malformed lines and special branch counts', () => {
+        const lcov = `
+SF:src/file.ts
+SF:
+BRDA:1,0,0,-1
+end_of_record
+`;
+        const records = parseLcovContent(lcov);
+        expect(records[0].branches.details[0].taken).toBe(0);
+    });
+
     it('converts to TotalCoverage', () => {
         const records = parseLcovContent(MOCK_LCOV);
         const total = convertLcovToTotal(records);

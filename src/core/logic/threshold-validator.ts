@@ -19,9 +19,12 @@ export function validatePerFileThresholds(coverage: TotalCoverage, minPct: numbe
   for (const [filePath, summary] of Object.entries(coverage)) {
     if (filePath === 'total') continue;
 
+    if (!summary) continue;
+
     const shortName = filePath.split('/').pop() || filePath; // simplified name for report
 
     for (const metric of metrics) {
+      if (!summary[metric]) continue;
       const value = summary[metric];
       if (value.pct < minPct) {
         violations.push(

@@ -37,4 +37,17 @@ describe('validatePerFileThresholds', () => {
     expect(result.pass).toBe(false);
     expect(result.violations).toHaveLength(2);
   });
+
+  it('ignores files with missing summary or metrics', () => {
+    const coverage: any = {
+        total: {},
+        'src/missing.ts': null,
+        'src/partial.ts': { lines: { pct: 90 } } // Missing other metrics
+    };
+    
+    // Should not throw and pass since no valid metrics violate threshold
+    const result = validatePerFileThresholds(coverage, 90);
+    expect(result.pass).toBe(true);
+    expect(result.violations).toHaveLength(0);
+  });
 });

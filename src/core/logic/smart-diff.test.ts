@@ -35,4 +35,17 @@ describe('SmartDiffChecker', () => {
         // If 'const x = 1; /* */', stripped is 'const x = 1; ', which trims to code. -> False (Significant).
              expect(checker.isIgnorable(tsFile, 'const x = 1; /* comment */', 1)).toBe(false);
     });
+
+    it('returns false for non-JS/TS files', () => {
+        expect(checker.isIgnorable('test.txt', 'significant content', 1)).toBe(false);
+    });
+
+    it('returns false when AST parsing fails', () => {
+         const checker = new SmartDiffChecker();
+         // Mock project.createSourceFile to throw to trigger catch block
+         (checker as any).project = {
+             createSourceFile: () => { throw new Error('Mock Error'); }
+         };
+         expect(checker.isIgnorable(tsFile, 'code', 1)).toBe(false);
+    });
 });

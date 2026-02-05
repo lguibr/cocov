@@ -118,7 +118,9 @@ export async function readCurrentCoverage(cwd: string, file?: string): Promise<T
     // Default behavior: Try Standard Summary
     const defaultSummary = path.resolve(cwd, 'coverage/coverage-summary.json');
     if (await fs.pathExists(defaultSummary)) {
-        return fs.readJSON(defaultSummary);
+        const summary = await fs.readJSON(defaultSummary);
+        if (summary.total) return summary;
+        // If summary file exists but lacks total (e.g. some reporters), try to calc or fall through
     }
 
     // Try Standard LCOV
